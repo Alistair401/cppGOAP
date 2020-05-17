@@ -1,7 +1,19 @@
 #include "WorldState.h"
 
+goap::WorldState::WorldState(const WorldState& other)
+    : priority_(other.priority_), name_(other.name_) 
+{
+    this->vars_ = other.vars_;
+}
+
 goap::WorldState::WorldState(const std::string name) : priority_(0), name_(name) {
-    //nop
+}
+
+goap::WorldState& goap::WorldState::operator=(const WorldState& other) {
+    this->name_ = other.name_;
+    this->priority_ = other.priority_;
+    this->vars_ = other.vars_;
+    return *this;
 }
 
 void goap::WorldState::setVariable(const int var_id, const bool value) {
@@ -18,16 +30,21 @@ bool goap::WorldState::operator==(const WorldState& other) const {
 }
 
 bool goap::WorldState::meetsGoal(const WorldState& goal_state) const {
-    for (const auto& kv : goal_state.vars_) {
-        try {
-            if (vars_.at(kv.first) != kv.second) {
-                return false;
-            }
+    for (const auto& kvp : goal_state.vars_) 
+    {
+        auto maybeVariable = this->vars_.find(kvp.first);
+
+        if (maybeVariable == this->vars_.end()) 
+        {
+            return false;
         }
-        catch (const std::out_of_range&) {
+
+        if (maybeVariable->second != kvp.second) 
+        {
             return false;
         }
     }
+
     return true;
 }
 

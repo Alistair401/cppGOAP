@@ -51,8 +51,8 @@ void goap::Planner::printClosedList() const {
 }
 
 std::vector<goap::Action> goap::Planner::plan(const WorldState& start, const WorldState& goal, const std::vector<Action>& actions) {
-    if (start.meetsGoal(goal)) {
-        //throw std::runtime_error("Planner cannot plan when the start state and the goal state are the same!");
+    if (start.meetsGoal(goal)) 
+    {
         return std::vector<goap::Action>();
     }
 
@@ -64,21 +64,11 @@ std::vector<goap::Action> goap::Planner::plan(const WorldState& start, const Wor
 
     open_.push_back(std::move(starting_node));
 
-    //int iters = 0;
     while (open_.size() > 0) {
-        //++iters;
-        //std::cout << "\n-----------------------\n";
-        //std::cout << "Iteration " << iters << std::endl;
 
         // Look for Node with the lowest-F-score on the open list. Switch it to closed,
         // and hang onto it -- this is our latest node.
         Node& current(popAndClose());
-
-        //std::cout << "Open list\n";
-        //printOpenList();
-        //std::cout << "Closed list\n";
-        //printClosedList();
-        //std::cout << "\nCurrent is " << current << " : " << (current.action_ == nullptr ? "" : current.action_->name()) << std::endl;
 
         // Is our current state the goal state? If so, we've found a path, yay.
         if (current.ws_.meetsGoal(goal)) {
@@ -104,8 +94,6 @@ std::vector<goap::Action> goap::Planner::plan(const WorldState& start, const Wor
                     continue;
                 }
 
-                //std::cout << potential_action.name() << " will get us to " << outcome << std::endl;
-
                 // Look for a Node with this WorldState on the open list.
                 auto p_outcome_node = memberOfOpen(outcome);
                 if (p_outcome_node == end(open_)) { // not a member of open list
@@ -115,8 +103,8 @@ std::vector<goap::Action> goap::Planner::plan(const WorldState& start, const Wor
                     addToOpenList(std::move(found));
                 } else { // already a member of the open list
                     // check if the current G is better than the recorded G
-                    if (current.g_ + potential_action.cost() < p_outcome_node->g_) {
-                        //std::cout << "My path to " << p_outcome_node->ws_ << " using " << potential_action.name() << " (combined cost " << current.g_ + potential_action.cost() << ") is better than existing (cost " <<  p_outcome_node->g_ << "\n";
+                    if (current.g_ + potential_action.cost() < p_outcome_node->g_) 
+                    {
                         p_outcome_node->parent_id_ = current.id_;                  // make current its parent
                         p_outcome_node->g_ = current.g_ + potential_action.cost(); // recalc G & H
                         p_outcome_node->h_ = calculateHeuristic(outcome, goal);

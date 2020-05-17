@@ -33,6 +33,7 @@ namespace goap {
 
     public:
         Action();
+        Action(int cost);
         Action(std::string name, int cost);
 
         /**
