@@ -98,15 +98,15 @@ std::vector<goap::Action> goap::Planner::plan(const WorldState& start, const Wor
                 auto p_outcome_node = memberOfOpen(outcome);
                 if (p_outcome_node == end(open_)) { // not a member of open list
                     // Make a new node, with current as its parent, recording G & H
-                    Node found(outcome, current.g_ + potential_action.cost(), calculateHeuristic(outcome, goal), current.id_, &potential_action);
+                    Node found(outcome, current.g_ + potential_action.GetCost(), calculateHeuristic(outcome, goal), current.id_, &potential_action);
                     // Add it to the open list (maintaining sort-order therein)
                     addToOpenList(std::move(found));
                 } else { // already a member of the open list
                     // check if the current G is better than the recorded G
-                    if (current.g_ + potential_action.cost() < p_outcome_node->g_) 
+                    if (current.g_ + potential_action.GetCost() < p_outcome_node->g_) 
                     {
                         p_outcome_node->parent_id_ = current.id_;                  // make current its parent
-                        p_outcome_node->g_ = current.g_ + potential_action.cost(); // recalc G & H
+                        p_outcome_node->g_ = current.g_ + potential_action.GetCost(); // recalc G & H
                         p_outcome_node->h_ = calculateHeuristic(outcome, goal);
                         p_outcome_node->action_ = &potential_action;
 

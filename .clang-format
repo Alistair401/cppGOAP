@@ -3,7 +3,7 @@ AlignTrailingComments: true
 AllowShortBlocksOnASingleLine: true
 AllowShortFunctionsOnASingleLine: true
 AllowShortIfStatementsOnASingleLine: false
-BreakBeforeBraces: Attach
+BreakBeforeBraces: Stroustrup
 BreakConstructorInitializersBeforeComma: true
 ColumnLimit: 0
 Cpp11BracedListStyle: false

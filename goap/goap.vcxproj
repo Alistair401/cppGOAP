@@ -231,12 +231,16 @@
     <ClCompile Include="Action.cpp" />
     <ClCompile Include="Planner.cpp" />
     <ClCompile Include="Node.cpp" />
+    <ClCompile Include="Precondition.cpp" />
+    <ClCompile Include="SimplePrecondition.cpp" />
     <ClCompile Include="WorldState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Action.h" />
     <ClInclude Include="Planner.h" />
     <ClInclude Include="Node.h" />
+    <ClInclude Include="Precondition.h" />
+    <ClInclude Include="SimplePrecondition.h" />
     <ClInclude Include="WorldState.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

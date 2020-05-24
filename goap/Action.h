@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <string>
 #include <unordered_map>
+#include "Precondition.h"
 
 // To support Google Test for private members
 #ifndef TEST_FRIENDS
@@ -21,20 +21,16 @@ namespace goap {
 
     class Action {
     private:
-        std::string name_; // The human-readable action name
+        int id_; 
         int cost_;         // The numeric cost of this action
 
-        // Preconditions are things that must be satisfied before this
-        // action can be taken. Only preconditions that "matter" are here.
-        std::unordered_map<int, bool> preconditions_;
+        std::vector<std::shared_ptr<Precondition>> preconditions_;
 
         // Effects are things that happen when this action takes place.
         std::unordered_map<int, bool> effects_;
 
     public:
-        Action();
-        Action(int cost);
-        Action(std::string name, int cost);
+        Action(int id, int cost);
 
         /**
          Is this action eligible to operate on the given worldstate?
@@ -51,14 +47,7 @@ namespace goap {
          */
         WorldState actOn(const WorldState& ws) const;
 
-        /**
-         Set the given precondition variable and value.
-         @param key the name of the precondition
-         @param value the value the precondition must hold
-         */
-        void setPrecondition(const int key, const bool value) {
-            preconditions_[key] = value;
-        }
+        void AddPrecondition(Precondition* p);
 
         /**
          Set the given effect of this action, in terms of variable and new value.
@@ -69,9 +58,9 @@ namespace goap {
             effects_[key] = value;
         }
 
-        int cost() const { return cost_; }
+        int GetCost() const { return cost_; }
 
-        std::string name() const { return name_; }
+        int Id() const { return id_; }
 
         TEST_FRIENDS;
     };
