@@ -15,11 +15,10 @@
 namespace goap {
     struct WorldState {
         float priority_; // useful if this is a goal state, to distinguish from other possible goals
-        std::string name_; // the human-readable name of the state
         std::map<int, bool> vars_; // the variables that in aggregate describe a worldstate
 
+        WorldState();
         WorldState(const WorldState& other);
-        WorldState(const std::string name="");
         WorldState& operator=(const WorldState& other);
 
 

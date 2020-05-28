@@ -29,6 +29,9 @@
     <ClCompile Include="SimplePrecondition.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PlannedAction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Action.h">
@@ -47,6 +50,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SimplePrecondition.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PlannedAction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

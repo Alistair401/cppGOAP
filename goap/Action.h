@@ -25,8 +25,6 @@ namespace goap {
         int cost_;         // The numeric cost of this action
 
         std::vector<std::shared_ptr<Precondition>> preconditions_;
-
-        // Effects are things that happen when this action takes place.
         std::unordered_map<int, bool> effects_;
 
     public:
