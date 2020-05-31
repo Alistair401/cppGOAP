@@ -6,6 +6,12 @@ goap::SimplePrecondition::SimplePrecondition(int variable, bool value)
 {
 }
 
+goap::SimplePrecondition::SimplePrecondition(int variable, int value)
+    : variable(variable)
+    , value(value)
+{
+}
+
 bool goap::SimplePrecondition::IsMet(const WorldState& state) const
 {
     auto maybeVariable = state.vars_.find(this->variable);

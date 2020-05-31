@@ -1,8 +1,6 @@
 #include "Action.h"
 #include "WorldState.h"
 
-#include <cassert>
-
 goap::Action::Action(int id, int cost)
 {
     this->id_ = id;
@@ -22,8 +20,9 @@ bool goap::Action::operableOn(const WorldState& ws) const {
 
 goap::WorldState goap::Action::actOn(const WorldState& ws) const {
     goap::WorldState tmp(ws);
-    for (const auto& effect : effects_) {
-        tmp.setVariable(effect.first, effect.second);
+    for (const auto& effect : effects_)
+    {
+        effect->Apply(tmp);
     }
     return tmp;
 }
@@ -33,3 +32,7 @@ void goap::Action::AddPrecondition(Precondition* p)
     this->preconditions_.emplace_back(p);
 }
 
+void goap::Action::AddEffect(Effect* e)
+{
+    this->effects_.emplace_back(e);
+}

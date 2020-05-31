@@ -4,8 +4,7 @@
 #include <cassert>
 #include <iostream>
 
-goap::Planner::Planner() {
-}
+goap::Planner::Planner() {}
 
 int goap::Planner::calculateHeuristic(const WorldState& now, const WorldState& goal) const {
     return now.distanceTo(goal);
@@ -36,18 +35,6 @@ bool goap::Planner::memberOfClosed(const WorldState& ws) const {
 
 std::vector<goap::Node>::iterator goap::Planner::memberOfOpen(const WorldState& ws) {
     return std::find_if(begin(open_), end(open_), [&](const Node & n) { return n.ws_ == ws; });
-}
-
-void goap::Planner::printOpenList() const {
-    for (const auto& n : open_) {
-        std::cout << n << std::endl;
-    }
-}
-
-void goap::Planner::printClosedList() const {
-    for (const auto& n : closed_) {
-        std::cout << n << std::endl;
-    }
 }
 
 std::vector<goap::PlannedAction> goap::Planner::plan(const WorldState& start, const WorldState& goal, const std::vector<Action>& actions) {

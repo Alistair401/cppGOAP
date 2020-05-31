@@ -3,7 +3,7 @@
 
 namespace goap 
 {
-    class Precondition 
+    class Precondition
     {
     public:
         virtual bool IsMet(const WorldState& state) const = 0;

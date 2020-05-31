@@ -6,12 +6,13 @@ namespace goap
     {
     public:
         SimplePrecondition(int variable, bool value);
+        SimplePrecondition(int variable, int value);
 
         virtual bool IsMet(const WorldState& state) const override;
 
     private:
         int variable;
-        bool value;
+        Value value;
     };
 }
 

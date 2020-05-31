@@ -8,33 +8,26 @@
 
 #pragma once
 
-#include <ostream>
-#include <string>
+#include "Value.h"
 #include <map>
 
-namespace goap {
-    struct WorldState {
+namespace goap
+{
+    struct WorldState 
+    {
         float priority_; // useful if this is a goal state, to distinguish from other possible goals
-        std::map<int, bool> vars_; // the variables that in aggregate describe a worldstate
+        std::map<int, Value> vars_;
 
         WorldState();
         WorldState(const WorldState& other);
         WorldState& operator=(const WorldState& other);
 
-
-        /**
-         Set a world state variable, e.g. "gunLoaded" / true
-         @param var_id the unique ID of the state variable
-         @param value the boolean value of the variable
-         */
-        void setVariable(const int var_id, const bool value);
-
-        /**
-         Retrieve the current value of the given variable.
-         @param var_id the unique ID of the state variable
-         @return the value of the variable
-        */
-        bool getVariable(const int var_id) const;
+        void set(int var_id, Value value);
+        void setBool(int var_id, bool value);
+        void setFloat(int var_id, float value);
+        void setInt(int var_id, int value);
+        void setVector(int var_id, const std::vector<Value>& values);
+        void setVector(int var_id, std::vector<Value>&& values);
 
         /**
          Useful if this state is a goal state. It asks, does state 'other'
@@ -59,21 +52,5 @@ namespace goap {
          @return true if they are equal, false if not
          */
         bool operator==(const WorldState& other) const;
-
-        // A friend function of a class is defined outside that class' scope but it has the
-        // right to access all private and protected members of the class. Even though the
-        // prototypes for friend functions appear in the class definition, friends are not
-        // member functions.
-        friend std::ostream& operator<<(std::ostream& out, const WorldState& n);
     };
-
-    inline std::ostream& operator<<(std::ostream& out, const WorldState& n) {
-        out << "WorldState { ";
-        for (const auto& kv : n.vars_) {
-            out << kv.second << " ";
-        }
-        out << "}";
-        return out;
-    }
-
 }

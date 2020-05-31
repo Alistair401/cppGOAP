@@ -17,12 +17,34 @@ goap::WorldState& goap::WorldState::operator=(const WorldState& other) {
     return *this;
 }
 
-void goap::WorldState::setVariable(const int var_id, const bool value) {
-    vars_[var_id] = value;
+void goap::WorldState::set(int var_id, Value value)
+{
+    this->vars_[var_id] = value;
 }
 
-bool goap::WorldState::getVariable(const int var_id) const {
-    return vars_.at(var_id);
+void goap::WorldState::setBool(int var_id, bool value)
+{
+    this->vars_.emplace(var_id, value);
+}
+
+void goap::WorldState::setFloat(int var_id, float value)
+{
+    this->vars_.emplace(var_id, value);
+}
+
+void goap::WorldState::setInt(int var_id, int value)
+{
+    this->vars_.emplace(var_id, value);
+}
+
+void goap::WorldState::setVector(int var_id, const std::vector<Value>& values)
+{
+    this->vars_.emplace(var_id, values);
+}
+
+void goap::WorldState::setVector(int var_id, std::vector<Value>&& values)
+{
+    this->vars_.emplace(var_id, std::move(values));
 }
 
 bool goap::WorldState::operator==(const WorldState& other) const {
@@ -39,7 +61,7 @@ bool goap::WorldState::meetsGoal(const WorldState& goal_state) const {
             return false;
         }
 
-        if (maybeVariable->second != kvp.second) 
+        if ((maybeVariable->second == kvp.second) == false) 
         {
             return false;
         }
@@ -53,7 +75,7 @@ int goap::WorldState::distanceTo(const WorldState& goal_state) const {
 
     for (const auto& kv : goal_state.vars_) {
         auto itr = vars_.find(kv.first);
-        if (itr == end(vars_) || itr->second != kv.second) {
+        if (itr == end(vars_) || (itr->second == kv.second) == false) {
             ++result;
         }
     }

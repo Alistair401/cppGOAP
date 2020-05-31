@@ -9,12 +9,9 @@
 #pragma once
 
 #include <unordered_map>
+#include <memory>
+#include "Effect.h"
 #include "Precondition.h"
-
-// To support Google Test for private members
-#ifndef TEST_FRIENDS
-#define TEST_FRIENDS
-#endif
 
 namespace goap {
     struct WorldState;
@@ -22,10 +19,10 @@ namespace goap {
     class Action {
     private:
         int id_; 
-        int cost_;         // The numeric cost of this action
+        int cost_;
 
         std::vector<std::shared_ptr<Precondition>> preconditions_;
-        std::unordered_map<int, bool> effects_;
+        std::vector<std::shared_ptr<Effect>> effects_;
 
     public:
         Action(int id, int cost);
@@ -46,21 +43,10 @@ namespace goap {
         WorldState actOn(const WorldState& ws) const;
 
         void AddPrecondition(Precondition* p);
-
-        /**
-         Set the given effect of this action, in terms of variable and new value.
-         @param key the name of the effect
-         @param value the value that will result
-         */
-        void setEffect(const int key, const bool value) {
-            effects_[key] = value;
-        }
+        void AddEffect(Effect* e);
 
         int GetCost() const { return cost_; }
-
         int Id() const { return id_; }
-
-        TEST_FRIENDS;
     };
 
 }
