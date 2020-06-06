@@ -127,6 +127,7 @@
     <ClCompile Include="Planner.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="Precondition.cpp" />
+    <ClCompile Include="SimpleAction.cpp" />
     <ClCompile Include="SimpleEffect.cpp" />
     <ClCompile Include="SimplePrecondition.cpp" />
     <ClCompile Include="Value.cpp" />
@@ -139,6 +140,7 @@
     <ClInclude Include="Planner.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="Precondition.h" />
+    <ClInclude Include="SimpleAction.h" />
     <ClInclude Include="SimpleEffect.h" />
     <ClInclude Include="SimplePrecondition.h" />
     <ClInclude Include="Value.h" />

@@ -71,16 +71,6 @@ namespace goap {
         Planner();
 
         /**
-         Useful when you're debugging a GOAP plan: simply dumps the open list to stdout.
-        */
-        void printOpenList() const;
-
-        /**
-         Useful when you're debugging a GOAP plan: simply dumps the closed list to stdout.
-        */
-        void printClosedList() const;
-
-        /**
          Actually attempt to formulate a plan to get from start to goal, given a pool of
          available actions.
          @param start the starting worldstate
@@ -89,7 +79,7 @@ namespace goap {
          @return a vector of Actions in REVERSE ORDER - use a reverse_iterator on this to get stepwise-order
          @exception std::runtime_error if no plan could be made with the available actions and states
          */
-        std::vector<PlannedAction> plan(const WorldState& start, const WorldState& goal, const std::vector<Action>& actions);
+        std::vector<PlannedAction> plan(const WorldState& start, const WorldState& goal, const std::vector<std::shared_ptr<Action>>& actions);
 
         TEST_FRIENDS;
     };
