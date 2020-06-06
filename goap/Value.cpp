@@ -65,6 +65,18 @@ namespace goap
 		{
 			return other.GetType() == Type::BOOL && this->value == other.AsBool();
 		}
+
+		virtual TypedData* operator|(const TypedData& other) const override
+        {
+			if (other.GetType() == Type::BOOL)
+			{
+                return new BoolData(this->value | other.AsBool());
+            }
+            else
+			{
+                return nullptr;
+            }
+        }
 	};
 
 	class FloatData : public Data<Type::FLOAT, float>
@@ -113,6 +125,16 @@ namespace goap
 		{
 			return other.GetType() == Type::INT && this->value == other.AsInt();
 		}
+
+		virtual TypedData* operator|(const TypedData& other) const override
+        {
+            if (other.GetType() == Type::INT) {
+                return new IntData(this->value | other.AsInt());
+            }
+            else {
+                return nullptr;
+            }
+        }
 	};
 
 	class VectorData : public Data<Type::VECTOR, std::vector<Value>>
@@ -201,12 +223,35 @@ namespace goap
 	Type Value::GetType() const
 	{
 		return this->data->GetType();
-	}
+    }
+
+    bool Value::AsBool() const
+    {
+        return this->data->AsBool();
+    }
+
+    float Value::AsFloat() const
+    {
+        return this->data->AsFloat();
+    }
+
+    int Value::AsInt() const
+    {
+        return this->data->AsInt();
+    }
 
 	bool Value::operator==(const Value& other) const
 	{
 		return (*this->data) == (*other.data);
-	}
+    }
+
+    Value Value::operator|(const Value& other) const
+    {
+        TypedData* or = (*this->data) | (*other.data);
+        Value result;
+        result.data.reset(or);
+        return result;
+    }
 
 	bool TypedData::AsBool() const
 	{
@@ -226,5 +271,10 @@ namespace goap
 	const std::vector<Value> TypedData::AsVector() const
 	{
 		return statics().emptyVector;
-	}
+    }
+
+    TypedData* TypedData::operator|(const TypedData& other) const
+    {
+        return nullptr;
+    }
 }

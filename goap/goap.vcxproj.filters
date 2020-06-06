@@ -44,6 +44,12 @@
     <ClCompile Include="SimpleAction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BitwiseOrEffect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MaskPrecondition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Action.h">
@@ -77,6 +83,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SimpleAction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BitwiseOrEffect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MaskPrecondition.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
