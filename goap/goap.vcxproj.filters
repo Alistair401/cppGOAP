@@ -50,6 +50,9 @@
     <ClCompile Include="MaskPrecondition.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ActionWithValue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Action.h">
@@ -89,6 +92,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MaskPrecondition.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ActionWithValue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -125,6 +125,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Action.cpp" />
+    <ClCompile Include="ActionWithValue.cpp" />
     <ClCompile Include="BitwiseOrEffect.cpp" />
     <ClCompile Include="MaskPrecondition.cpp" />
     <ClCompile Include="Effect.cpp" />
@@ -140,6 +141,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Action.h" />
+    <ClInclude Include="ActionWithValue.h" />
     <ClInclude Include="BitwiseOrEffect.h" />
     <ClInclude Include="MaskPrecondition.h" />
     <ClInclude Include="Effect.h" />
