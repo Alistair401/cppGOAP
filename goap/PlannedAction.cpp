@@ -1,5 +1,10 @@
 #include "PlannedAction.h"
 
+goap::PlannedAction::PlannedAction()
+    : id_(-1)
+{
+}
+
 goap::PlannedAction::PlannedAction(int id)
     : id_(id)
 {

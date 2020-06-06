@@ -18,9 +18,9 @@ enum VerbId
 
 enum ObjectId 
 {
-	RECIPE,
-	NUMBER,
-	PIZZA
+	RECIPE = 0x1,
+	NUMBER = 0x2,
+	PIZZA  = 0x4
 };
 
 int main()
