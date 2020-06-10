@@ -17,14 +17,12 @@ bool goap::SimpleAction::OperableOn(const goap::WorldState& ws) const
     return true;
 }
 
-goap::PlannedAction goap::SimpleAction::ActOn(WorldState& ws) const
+void goap::SimpleAction::ActOn(WorldState& ws) const
 {
     for (const auto& effect : effects_) 
     {
         effect->Apply(ws);
     }
-
-    return PlannedAction(this->id_);
 }
 
 void goap::SimpleAction::AddPrecondition(Precondition* p)
@@ -35,4 +33,9 @@ void goap::SimpleAction::AddPrecondition(Precondition* p)
 void goap::SimpleAction::AddEffect(Effect* e)
 {
     this->effects_.emplace_back(e);
+}
+
+goap::PlannedAction goap::SimpleAction::Plan() const
+{
+    return PlannedAction(this->id_);
 }

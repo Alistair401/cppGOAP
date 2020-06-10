@@ -22,12 +22,14 @@ namespace goap
         WorldState(const WorldState& other);
         WorldState& operator=(const WorldState& other);
 
-        void set(int var_id, Value value);
+        void set(int var_id, const Value& value);
         void setBool(int var_id, bool value);
         void setFloat(int var_id, float value);
         void setInt(int var_id, int value);
         void setVector(int var_id, const std::vector<Value>& values);
         void setVector(int var_id, std::vector<Value>&& values);
+
+        void erase(int var_id);
 
         /**
          Useful if this state is a goal state. It asks, does state 'other'

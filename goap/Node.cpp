@@ -11,11 +11,11 @@ goap::Node::Node(const WorldState state, int g, int h, int parent_id)
     , g_(g)
     , h_(h)
     , parent_id_(parent_id)
-    , action_({})
+    , action_(nullptr)
 {
 }
 
-goap::Node::Node(const WorldState state, int g, int h, int parent_id, const PlannedAction& action) :
+goap::Node::Node(const WorldState state, int g, int h, int parent_id, const Action* action) :
     ws_(state), g_(g), h_(h), parent_id_(parent_id), action_(action) {
     id_ = ++last_id_;
 }

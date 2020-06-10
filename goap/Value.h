@@ -38,6 +38,8 @@ namespace goap
         bool operator==(const Value& other) const;
 
         Value operator|(const Value& other) const;
+        Value operator~() const;
+        Value operator&(const Value& other) const;
 
     private:
         std::shared_ptr<TypedData> data;
@@ -57,5 +59,7 @@ namespace goap
         virtual const std::vector<Value> AsVector() const;
 
         virtual TypedData* operator|(const TypedData& other) const;
+        virtual TypedData* operator~() const;
+        virtual TypedData* operator&(const TypedData& other) const;
     };
 }

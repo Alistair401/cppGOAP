@@ -17,7 +17,8 @@
 namespace goap {
     struct WorldState;
 
-    class Action {
+    class Action 
+    {
     private:
         int cost_;
 
@@ -28,7 +29,8 @@ namespace goap {
         Action(int id, int cost);
 
         virtual bool OperableOn(const goap::WorldState& ws) const = 0;
-        virtual PlannedAction ActOn(WorldState& ws) const = 0;
+        virtual void ActOn(WorldState& ws) const = 0;
+        virtual PlannedAction Plan() const = 0;
 
         int GetCost() const { return cost_; }
         int Id() const { return id_; }

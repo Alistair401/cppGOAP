@@ -65,18 +65,6 @@ namespace goap
 		{
 			return other.GetType() == Type::BOOL && this->value == other.AsBool();
 		}
-
-		virtual TypedData* operator|(const TypedData& other) const override
-        {
-			if (other.GetType() == Type::BOOL)
-			{
-                return new BoolData(this->value | other.AsBool());
-            }
-            else
-			{
-                return nullptr;
-            }
-        }
 	};
 
 	class FloatData : public Data<Type::FLOAT, float>
@@ -128,10 +116,29 @@ namespace goap
 
 		virtual TypedData* operator|(const TypedData& other) const override
         {
-            if (other.GetType() == Type::INT) {
+            if (other.GetType() == Type::INT) 
+			{
                 return new IntData(this->value | other.AsInt());
             }
-            else {
+            else 
+			{
+                return nullptr;
+            }
+        }
+
+		virtual TypedData* operator~() const override
+        {
+            return new IntData(~this->value);
+        }
+
+		virtual TypedData* operator&(const TypedData& other) const override
+        {
+            if (other.GetType() == Type::INT) 
+			{
+                return new IntData(this->value & other.AsInt());
+            }
+            else 
+			{
                 return nullptr;
             }
         }
@@ -253,6 +260,22 @@ namespace goap
         return result;
     }
 
+    Value Value::operator~() const
+    {
+        TypedData* not = ~(*this->data);
+        Value result;
+        result.data.reset(not);
+        return result;
+    }
+
+    Value Value::operator&(const Value& other) const
+    {
+        TypedData* and = (*this->data) & (*other.data);
+        Value result;
+        result.data.reset(and);
+        return result;
+    }
+
 	bool TypedData::AsBool() const
 	{
 		return false;
@@ -274,6 +297,16 @@ namespace goap
     }
 
     TypedData* TypedData::operator|(const TypedData& other) const
+    {
+        return nullptr;
+    }
+
+    TypedData* TypedData::operator~() const
+    {
+        return nullptr;
+    }
+
+    TypedData* TypedData::operator&(const TypedData& other) const
     {
         return nullptr;
     }
