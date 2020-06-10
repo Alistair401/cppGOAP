@@ -25,17 +25,6 @@
 namespace goap {
     class Planner {
     private:
-        std::vector<Node> open_;   // The A* open list
-        std::vector<Node> closed_; // The A* closed list
-
-        /**
-         Is the given worldstate a member of the closed list? (And by that we mean,
-         does any node on the closed list contain an equal worldstate.)
-         @param ws the worldstate in question
-         @return true if it's been closed, false if not
-         */
-        bool memberOfClosed(const WorldState& ws) const;
-
         /**
          Is the given worldstate a member of the open list? (And by that we mean,
          does any node on the open list contain an equal worldstate.)
@@ -43,20 +32,6 @@ namespace goap {
          @return a pointer to the note if found, end(open_) if not
          */
         std::vector<goap::Node>::iterator memberOfOpen(const WorldState& ws);
-
-        /**
-         Pops the first Node from the 'open' list, moves it to the 'closed' list, and
-         returns a reference to this newly-closed Node. Its behavior is undefined if
-         you call on an empty list.
-         @return a reference to the newly closed Node
-         */
-        Node& popAndClose();
-
-        /**
-         Moves the given Node (an rvalue reference) into the 'open' list.
-         @param an rvalue reference to a Node that will be moved to the open list
-         */
-        void addToOpenList(Node&&);
 
         /**
          Given two worldstates, calculates an estimated distance (the A* 'heuristic')

@@ -4,37 +4,51 @@
 #include <cassert>
 #include <iostream>
 
+namespace 
+{
+    /**
+    Moves the given Node (an rvalue reference) into the 'open' list.
+    @param an rvalue reference to a Node that will be moved to the open list
+    */
+    void AddToOpenList(std::vector<goap::Node>& open, goap::Node&& n)
+    {
+        // insert maintaining sort order
+        auto it = std::lower_bound(begin(open),
+                                   end(open),
+                                   n);
+        open.emplace(it, std::move(n));
+    }
+
+    /**
+    Pops the first Node from the 'open' list, moves it to the 'closed' list, and
+    returns a reference to this newly-closed Node. Its behavior is undefined if
+    you call on an empty list.
+    @return a reference to the newly closed Node
+    */
+    goap::Node& PopAndClose(std::vector<goap::Node>& open, std::vector<goap::Node>& closed)
+    {
+        assert(!open.empty());
+        closed.push_back(std::move(open.front()));
+        open.erase(open.begin());
+
+        return closed.back();
+    }
+
+    std::vector<goap::Node>::iterator Find(std::vector<goap::Node>& set, const goap::WorldState& ws)
+    {
+        return std::find_if(begin(set), end(set), [&](const goap::Node& n) { return n.ws_ == ws; });
+    }
+
+    bool MemberOf(std::vector<goap::Node>& set, const goap::WorldState& ws)
+    {
+        return Find(set, ws) != end(set); 
+    }
+}
+
 goap::Planner::Planner() {}
 
 int goap::Planner::calculateHeuristic(const WorldState& now, const WorldState& goal) const {
     return now.distanceTo(goal);
-}
-
-void goap::Planner::addToOpenList(Node&& n) {
-    // insert maintaining sort order
-    auto it = std::lower_bound(begin(open_),
-                               end(open_),
-                               n);
-    open_.emplace(it, std::move(n));
-}
-
-goap::Node& goap::Planner::popAndClose() {
-    assert(!open_.empty());
-    closed_.push_back(std::move(open_.front()));
-    open_.erase(open_.begin());
-
-    return closed_.back();
-}
-
-bool goap::Planner::memberOfClosed(const WorldState& ws) const {
-    if (std::find_if(begin(closed_), end(closed_), [&](const Node & n) { return n.ws_ == ws; }) == end(closed_)) {
-        return false;
-    }
-    return true;
-}
-
-std::vector<goap::Node>::iterator goap::Planner::memberOfOpen(const WorldState& ws) {
-    return std::find_if(begin(open_), end(open_), [&](const Node & n) { return n.ws_ == ws; });
 }
 
 std::vector<goap::PlannedAction> goap::Planner::plan(const WorldState& start, const WorldState& goal, const std::vector<std::shared_ptr<Action>>& actions) {
@@ -43,30 +57,31 @@ std::vector<goap::PlannedAction> goap::Planner::plan(const WorldState& start, co
         return std::vector<goap::PlannedAction>();
     }
 
-    // Feasible we'd re-use a planner, so clear out the prior results
-    open_.clear();
-    closed_.clear();
+    std::vector<Node> open;
+    std::vector<Node> closed;
 
     Node starting_node(start, 0, calculateHeuristic(start, goal), 0, {});
 
-    open_.push_back(std::move(starting_node));
+    open.push_back(std::move(starting_node));
 
-    while (open_.size() > 0) {
+    while (open.size() > 0) {
 
         // Look for Node with the lowest-F-score on the open list. Switch it to closed,
         // and hang onto it -- this is our latest node.
-        Node& current(popAndClose());
+        Node& current(PopAndClose(open, closed));
 
         // Is our current state the goal state? If so, we've found a path, yay.
-        if (current.ws_.meetsGoal(goal)) {
+        if (current.ws_.meetsGoal(goal)) 
+        {
             std::vector<PlannedAction> the_plan;
             
             do 
             {
                 the_plan.push_back(current.action_->Plan());
-                auto itr = std::find_if(begin(open_), end(open_), [&](const Node & n) { return n.id_ == current.parent_id_; });
-                if (itr == end(open_)) {
-                    itr = std::find_if(begin(closed_), end(closed_), [&](const Node & n) { return n.id_ == current.parent_id_; });
+                auto itr = std::find_if(begin(open), end(open), [&](const Node& n) { return n.id_ == current.parent_id_; });
+                if (itr == end(open)) 
+                {
+                    itr = std::find_if(begin(closed), end(closed), [&](const Node& n) { return n.id_ == current.parent_id_; });
                 }
                 current = *itr;
             } while (current.parent_id_ != 0);
@@ -81,17 +96,17 @@ std::vector<goap::PlannedAction> goap::Planner::plan(const WorldState& start, co
                 potential_action->ActOn(outcome);
 
                 // Skip if already closed
-                if (memberOfClosed(outcome)) {
+                if (MemberOf(closed, outcome)) {
                     continue;
                 }
 
                 // Look for a Node with this WorldState on the open list.
-                auto p_outcome_node = memberOfOpen(outcome);
-                if (p_outcome_node == end(open_)) { // not a member of open list
+                auto p_outcome_node = Find(open, outcome);
+                if (p_outcome_node == end(open)) { // not a member of open list
                     // Make a new node, with current as its parent, recording G & H
                     Node found(outcome, current.g_ + potential_action->GetCost(), calculateHeuristic(outcome, goal), current.id_, potential_action.get());
                     // Add it to the open list (maintaining sort-order therein)
-                    addToOpenList(std::move(found));
+                    AddToOpenList(open, std::move(found));
                 } else { // already a member of the open list
                     // check if the current G is better than the recorded G
                     if (current.g_ + potential_action->GetCost() < p_outcome_node->g_) 
@@ -103,7 +118,7 @@ std::vector<goap::PlannedAction> goap::Planner::plan(const WorldState& start, co
 
                         // resort open list to account for the new F
                         // sorting likely invalidates the p_outcome_node iterator, but we don't need it anymore
-                        std::sort(begin(open_), end(open_));
+                        std::sort(begin(open), end(open));
                     }
                 }
             }
