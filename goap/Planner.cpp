@@ -43,12 +43,11 @@ namespace
     {
         return Find(set, ws) != end(set); 
     }
-}
 
-goap::Planner::Planner() {}
-
-int goap::Planner::calculateHeuristic(const WorldState& now, const WorldState& goal) const {
-    return now.distanceTo(goal);
+    int CalculateHeuristic(const goap::WorldState& now, const goap::WorldState& goal)
+    {
+        return now.distanceTo(goal);
+    }
 }
 
 std::vector<goap::PlannedAction> goap::Planner::plan(const WorldState& start, const WorldState& goal, const std::vector<std::shared_ptr<Action>>& actions) {
@@ -60,7 +59,7 @@ std::vector<goap::PlannedAction> goap::Planner::plan(const WorldState& start, co
     std::vector<Node> open;
     std::vector<Node> closed;
 
-    Node starting_node(start, 0, calculateHeuristic(start, goal), 0, {});
+    Node starting_node(start, 0, CalculateHeuristic(start, goal), 0, {});
 
     open.push_back(std::move(starting_node));
 
@@ -104,7 +103,7 @@ std::vector<goap::PlannedAction> goap::Planner::plan(const WorldState& start, co
                 auto p_outcome_node = Find(open, outcome);
                 if (p_outcome_node == end(open)) { // not a member of open list
                     // Make a new node, with current as its parent, recording G & H
-                    Node found(outcome, current.g_ + potential_action->GetCost(), calculateHeuristic(outcome, goal), current.id_, potential_action.get());
+                    Node found(outcome, current.g_ + potential_action->GetCost(), CalculateHeuristic(outcome, goal), current.id_, potential_action.get());
                     // Add it to the open list (maintaining sort-order therein)
                     AddToOpenList(open, std::move(found));
                 } else { // already a member of the open list
@@ -113,7 +112,7 @@ std::vector<goap::PlannedAction> goap::Planner::plan(const WorldState& start, co
                     {
                         p_outcome_node->parent_id_ = current.id_;                  // make current its parent
                         p_outcome_node->g_ = current.g_ + potential_action->GetCost(); // recalc G & H
-                        p_outcome_node->h_ = calculateHeuristic(outcome, goal);
+                        p_outcome_node->h_ = CalculateHeuristic(outcome, goal);
                         p_outcome_node->action_ = potential_action.get();
 
                         // resort open list to account for the new F

@@ -47,9 +47,8 @@ int main()
     cook->AddPrecondition(new goap::MaskPrecondition(HAS, RECIPE));
     cook->AddEffect(new goap::BitwiseOrEffect(HAS, PIZZA));
 
-    goap::Planner planner;
     std::vector<std::shared_ptr<goap::Action>> actions{ eat, order, cook };
-    std::vector<goap::PlannedAction> plan = planner.plan(start, goal, actions);
+    std::vector<goap::PlannedAction> plan = goap::Planner::plan(start, goal, actions);
 
     std::unordered_map<int, std::string> actionLookup;
     actionLookup[ORDER] = "ORDER";
