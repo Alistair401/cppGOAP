@@ -3,12 +3,14 @@
 
 namespace goap
 {
-    class SimpleEffect : public Effect {
+    class SimpleEffect : public Effect
+    {
     public:
         SimpleEffect(int variable, bool value);
         SimpleEffect(int variable, int value);
 
-        virtual void Apply(WorldState& state) override;
+        virtual bool ResolvesAny(WorldState& state) override;
+        virtual void Resolve(WorldState& state) override;
 
     private:
         int variable;

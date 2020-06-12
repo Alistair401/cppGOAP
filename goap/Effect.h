@@ -6,6 +6,7 @@ namespace goap
     class Effect
     {
     public:
-        virtual void Apply(WorldState& state) = 0;
+        virtual bool ResolvesAny(WorldState& state) = 0;
+        virtual void Resolve(WorldState& state) = 0;
     };
 }

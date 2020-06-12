@@ -59,18 +59,18 @@ std::vector<goap::PlannedAction> goap::Planner::plan(const WorldState& start, co
     std::vector<Node> open;
     std::vector<Node> closed;
 
-    Node starting_node(start, 0, CalculateHeuristic(start, goal), 0, {});
+    Node starting_node(goal, 0, CalculateHeuristic(goal, start), 0, nullptr);
 
     open.push_back(std::move(starting_node));
 
-    while (open.size() > 0) {
-
+    while (open.size() > 0) 
+    {
         // Look for Node with the lowest-F-score on the open list. Switch it to closed,
         // and hang onto it -- this is our latest node.
         Node& current(PopAndClose(open, closed));
 
         // Is our current state the goal state? If so, we've found a path, yay.
-        if (current.ws_.meetsGoal(goal)) 
+        if (start.meetsGoal(current.ws_)) 
         {
             std::vector<PlannedAction> the_plan;
             
@@ -89,30 +89,36 @@ std::vector<goap::PlannedAction> goap::Planner::plan(const WorldState& start, co
         }
 
         // Check each node REACHABLE from current -- in other words, where can we go from here?
-        for (const auto& potential_action : actions) {
-            if (potential_action->OperableOn(current.ws_)) {
-                WorldState outcome(current.ws_);
-                potential_action->ActOn(outcome);
+        for (const auto& potential_action : actions) 
+        {
+            if (potential_action->ResolvesAny(current.ws_)) 
+            {
+                WorldState toResolve(current.ws_);
+                potential_action->Resolve(toResolve);
 
                 // Skip if already closed
-                if (MemberOf(closed, outcome)) {
+                if (MemberOf(closed, toResolve)) 
+                {
                     continue;
                 }
 
                 // Look for a Node with this WorldState on the open list.
-                auto p_outcome_node = Find(open, outcome);
-                if (p_outcome_node == end(open)) { // not a member of open list
+                auto p_outcome_node = Find(open, toResolve);
+                if (p_outcome_node == end(open)) 
+                {
                     // Make a new node, with current as its parent, recording G & H
-                    Node found(outcome, current.g_ + potential_action->GetCost(), CalculateHeuristic(outcome, goal), current.id_, potential_action.get());
+                    Node found(toResolve, current.g_ + potential_action->GetCost(), CalculateHeuristic(toResolve, start), current.id_, potential_action.get());
                     // Add it to the open list (maintaining sort-order therein)
                     AddToOpenList(open, std::move(found));
-                } else { // already a member of the open list
+                }
+                else 
+                {
                     // check if the current G is better than the recorded G
                     if (current.g_ + potential_action->GetCost() < p_outcome_node->g_) 
                     {
                         p_outcome_node->parent_id_ = current.id_;                  // make current its parent
                         p_outcome_node->g_ = current.g_ + potential_action->GetCost(); // recalc G & H
-                        p_outcome_node->h_ = CalculateHeuristic(outcome, goal);
+                        p_outcome_node->h_ = CalculateHeuristic(toResolve, start);
                         p_outcome_node->action_ = potential_action.get();
 
                         // resort open list to account for the new F

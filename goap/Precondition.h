@@ -6,7 +6,7 @@ namespace goap
     class Precondition
     {
     public:
-        virtual bool IsMet(const WorldState& state) const = 0;
+        virtual void Apply(WorldState& state) const = 0;
     };
 }
 

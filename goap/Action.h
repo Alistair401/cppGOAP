@@ -28,9 +28,10 @@ namespace goap {
     public:
         Action(int id, int cost);
 
-        virtual bool OperableOn(const goap::WorldState& ws) const = 0;
-        virtual void ActOn(WorldState& ws) const = 0;
         virtual PlannedAction Plan() const = 0;
+
+        virtual bool ResolvesAny(WorldState& ws) const = 0;
+        virtual void Resolve(WorldState& ws) const = 0;
 
         int GetCost() const { return cost_; }
         int Id() const { return id_; }

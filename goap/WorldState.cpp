@@ -79,7 +79,7 @@ int goap::WorldState::distanceTo(const WorldState& goal_state) const {
     int result = 0;
 
     for (const auto& kv : goal_state.vars_) {
-        auto itr = vars_.find(kv.first);
+        auto itr = this->vars_.find(kv.first);
         if (itr == end(vars_) || (itr->second == kv.second) == false) {
             ++result;
         }

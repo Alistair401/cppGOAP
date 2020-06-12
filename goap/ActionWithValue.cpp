@@ -6,11 +6,6 @@ goap::ActionWithValue::ActionWithValue(int id, int cost, Value value)
 {
 }
 
-void goap::ActionWithValue::ActOn(WorldState& ws) const
-{
-    SimpleAction::ActOn(ws);
-}
-
 goap::PlannedAction goap::ActionWithValue::Plan() const
 {
     return PlannedAction(this->id_, this->value_);

@@ -5,26 +5,6 @@ goap::SimpleAction::SimpleAction(int id, int cost)
 {
 }
 
-bool goap::SimpleAction::OperableOn(const goap::WorldState& ws) const
-{
-    for (const auto& precond : preconditions_) 
-    {
-        if (precond->IsMet(ws) == false) 
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
-void goap::SimpleAction::ActOn(WorldState& ws) const
-{
-    for (const auto& effect : effects_) 
-    {
-        effect->Apply(ws);
-    }
-}
-
 void goap::SimpleAction::AddPrecondition(Precondition* p)
 {
     this->preconditions_.emplace_back(p);
@@ -38,4 +18,30 @@ void goap::SimpleAction::AddEffect(Effect* e)
 goap::PlannedAction goap::SimpleAction::Plan() const
 {
     return PlannedAction(this->id_);
+}
+
+bool goap::SimpleAction::ResolvesAny(WorldState& ws) const
+{
+    for (const auto& effect : this->effects_)
+    {
+        if (effect->ResolvesAny(ws)) 
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void goap::SimpleAction::Resolve(WorldState& ws) const
+{
+    for (const auto& effect : this->effects_)
+    {
+        effect->Resolve(ws);
+    }
+
+    for (const auto& precondition : this->preconditions_)
+    {
+        precondition->Apply(ws);
+    }
 }
