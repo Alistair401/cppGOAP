@@ -28,23 +28,23 @@ enum ObjectId
 int main()
 {
     goap::WorldState start;
-    start.setBool(HUNGRY, true);
-    start.setInt(HAS, NUMBER);
+    start.Set(HUNGRY, nullptr, true);
+    start.Set(HAS, nullptr, NUMBER);
 
     goap::WorldState goal;
-    goal.setBool(HUNGRY, false);
+    goal.Set(HUNGRY, nullptr, false);
 
     std::shared_ptr<goap::ActionWithValue> eat = std::make_shared<goap::ActionWithValue>(EAT, 1, goap::Value(PIZZA));
-    eat->AddPrecondition(new goap::SimplePrecondition(HAS, PIZZA));
-    eat->AddEffect(new goap::SimpleEffect(HUNGRY, false));
+    eat->AddPrecondition(new goap::SimplePrecondition(HAS, nullptr, PIZZA));
+    eat->AddEffect(new goap::SimpleEffect(HUNGRY, nullptr, false));
 
     std::shared_ptr<goap::ActionWithValue> order = std::make_shared<goap::ActionWithValue>(ORDER, 1, goap::Value(PIZZA));
-    order->AddPrecondition(new goap::SimplePrecondition(HAS, NUMBER));
-    order->AddEffect(new goap::SimpleEffect(HAS, PIZZA));
+    order->AddPrecondition(new goap::SimplePrecondition(HAS, nullptr, NUMBER));
+    order->AddEffect(new goap::SimpleEffect(HAS, nullptr, PIZZA));
 
     std::shared_ptr<goap::ActionWithValue> cook = std::make_shared<goap::ActionWithValue>(COOK, 10, goap::Value(PIZZA));
-    cook->AddPrecondition(new goap::SimplePrecondition(HAS, RECIPE));
-    cook->AddEffect(new goap::SimpleEffect(HAS, PIZZA));
+    cook->AddPrecondition(new goap::SimplePrecondition(HAS, nullptr, RECIPE));
+    cook->AddEffect(new goap::SimpleEffect(HAS, nullptr, PIZZA));
 
     std::vector<std::shared_ptr<goap::Action>> actions{ eat, order, cook };
     std::vector<goap::PlannedAction> plan = goap::Planner::plan(start, goal, actions);

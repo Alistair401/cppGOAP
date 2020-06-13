@@ -136,6 +136,7 @@
     <ClCompile Include="SimplePrecondition.cpp" />
     <ClCompile Include="Value.cpp" />
     <ClCompile Include="WorldState.cpp" />
+    <ClCompile Include="WorldStateKey.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Action.h" />
@@ -150,6 +151,7 @@
     <ClInclude Include="SimplePrecondition.h" />
     <ClInclude Include="Value.h" />
     <ClInclude Include="WorldState.h" />
+    <ClInclude Include="WorldStateKey.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

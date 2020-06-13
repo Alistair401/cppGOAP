@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Value.h"
+#include "WorldStateKey.h"
 #include <map>
 
 namespace goap
@@ -16,20 +17,15 @@ namespace goap
     struct WorldState 
     {
         float priority_; // useful if this is a goal state, to distinguish from other possible goals
-        std::map<int, Value> vars_;
+        std::map<WorldStateKey, Value> vars_;
 
         WorldState();
         WorldState(const WorldState& other);
         WorldState& operator=(const WorldState& other);
 
-        void set(int var_id, const Value& value);
-        void setBool(int var_id, bool value);
-        void setFloat(int var_id, float value);
-        void setInt(int var_id, int value);
-        void setVector(int var_id, const std::vector<Value>& values);
-        void setVector(int var_id, std::vector<Value>&& values);
+        void Set(int variable, void* subject, const Value& value);
 
-        void erase(int var_id);
+        void Erase(int variable, void* subject);
 
         /**
          Useful if this state is a goal state. It asks, does state 'other'

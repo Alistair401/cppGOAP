@@ -17,39 +17,14 @@ goap::WorldState& goap::WorldState::operator=(const WorldState& other) {
     return *this;
 }
 
-void goap::WorldState::set(int var_id, const Value& value)
+void goap::WorldState::Set(int variable, void* subject, const Value& value)
 {
-    this->vars_[var_id] = value;
+    this->vars_[{ variable, subject }] = value;
 }
 
-void goap::WorldState::setBool(int var_id, bool value)
+void goap::WorldState::Erase(int variable, void* subject)
 {
-    this->vars_.emplace(var_id, value);
-}
-
-void goap::WorldState::setFloat(int var_id, float value)
-{
-    this->vars_.emplace(var_id, value);
-}
-
-void goap::WorldState::setInt(int var_id, int value)
-{
-    this->vars_.emplace(var_id, value);
-}
-
-void goap::WorldState::setVector(int var_id, const std::vector<Value>& values)
-{
-    this->vars_.emplace(var_id, values);
-}
-
-void goap::WorldState::setVector(int var_id, std::vector<Value>&& values)
-{
-    this->vars_.emplace(var_id, std::move(values));
-}
-
-void goap::WorldState::erase(int var_id)
-{
-    this->vars_.erase(var_id);
+    this->vars_.erase({ variable, subject });
 }
 
 bool goap::WorldState::operator==(const WorldState& other) const {
