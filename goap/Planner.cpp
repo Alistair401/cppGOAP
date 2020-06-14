@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <cassert>
-#include <iostream>
 
 namespace 
 {
@@ -59,7 +58,7 @@ std::vector<goap::PlannedAction> goap::Planner::plan(const WorldState& start, co
     std::vector<Node> open;
     std::vector<Node> closed;
 
-    Node starting_node(goal, 0, CalculateHeuristic(goal, start), 0, nullptr);
+    Node starting_node(goal, 0, CalculateHeuristic(start, goal), 0);
 
     open.push_back(std::move(starting_node));
 
@@ -76,7 +75,7 @@ std::vector<goap::PlannedAction> goap::Planner::plan(const WorldState& start, co
             
             do 
             {
-                the_plan.push_back(current.action_->Plan());
+                the_plan.push_back(current.action_.value());
                 auto itr = std::find_if(begin(open), end(open), [&](const Node& n) { return n.id_ == current.parent_id_; });
                 if (itr == end(open)) 
                 {
@@ -94,7 +93,7 @@ std::vector<goap::PlannedAction> goap::Planner::plan(const WorldState& start, co
             if (potential_action->ResolvesAny(current.ws_)) 
             {
                 WorldState toResolve(current.ws_);
-                potential_action->Resolve(toResolve);
+                goap::PlannedAction planned = potential_action->Resolve(toResolve);
 
                 // Skip if already closed
                 if (MemberOf(closed, toResolve)) 
@@ -107,7 +106,7 @@ std::vector<goap::PlannedAction> goap::Planner::plan(const WorldState& start, co
                 if (p_outcome_node == end(open)) 
                 {
                     // Make a new node, with current as its parent, recording G & H
-                    Node found(toResolve, current.g_ + potential_action->GetCost(), CalculateHeuristic(toResolve, start), current.id_, potential_action.get());
+                    Node found(toResolve, current.g_ + potential_action->GetCost(), CalculateHeuristic(start, toResolve), current.id_, planned);
                     // Add it to the open list (maintaining sort-order therein)
                     AddToOpenList(open, std::move(found));
                 }
@@ -118,8 +117,8 @@ std::vector<goap::PlannedAction> goap::Planner::plan(const WorldState& start, co
                     {
                         p_outcome_node->parent_id_ = current.id_;                  // make current its parent
                         p_outcome_node->g_ = current.g_ + potential_action->GetCost(); // recalc G & H
-                        p_outcome_node->h_ = CalculateHeuristic(toResolve, start);
-                        p_outcome_node->action_ = potential_action.get();
+                        p_outcome_node->h_ = CalculateHeuristic(start, toResolve);
+                        p_outcome_node->action_ = planned;
 
                         // resort open list to account for the new F
                         // sorting likely invalidates the p_outcome_node iterator, but we don't need it anymore

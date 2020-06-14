@@ -12,10 +12,8 @@ namespace goap
         
         void AddEffect(Effect* e);
 
-        virtual PlannedAction Plan() const override;
-
         virtual bool ResolvesAny(WorldState& ws) const override;
-        virtual void Resolve(WorldState& ws) const override;
+        virtual PlannedAction Resolve(WorldState& ws) const override;
 
     private:
         std::vector<std::shared_ptr<Precondition>> preconditions_;

@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "goap", "goap\goap.vcxproj",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "example", "example\example.vcxproj", "{343CBD8D-BB57-4D22-AB81-25198C069C69}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "maze-example", "maze-example\maze-example.vcxproj", "{DC6F5B53-98CD-4AB6-B7CF-5E2A6F480133}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,10 @@ Global
 		{343CBD8D-BB57-4D22-AB81-25198C069C69}.Debug|x64.Build.0 = Debug|x64
 		{343CBD8D-BB57-4D22-AB81-25198C069C69}.Release|x64.ActiveCfg = Release|x64
 		{343CBD8D-BB57-4D22-AB81-25198C069C69}.Release|x64.Build.0 = Release|x64
+		{DC6F5B53-98CD-4AB6-B7CF-5E2A6F480133}.Debug|x64.ActiveCfg = Debug|x64
+		{DC6F5B53-98CD-4AB6-B7CF-5E2A6F480133}.Debug|x64.Build.0 = Debug|x64
+		{DC6F5B53-98CD-4AB6-B7CF-5E2A6F480133}.Release|x64.ActiveCfg = Release|x64
+		{DC6F5B53-98CD-4AB6-B7CF-5E2A6F480133}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
