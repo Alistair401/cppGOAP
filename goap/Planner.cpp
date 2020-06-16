@@ -35,7 +35,7 @@ namespace
 
     std::vector<goap::Node>::iterator Find(std::vector<goap::Node>& set, const goap::WorldState& ws)
     {
-        return std::find_if(begin(set), end(set), [&](const goap::Node& n) { return n.ws_ == ws; });
+        return std::find_if(begin(set), end(set), [&](const goap::Node& n) { return ws.meetsGoal(n.ws_); });
     }
 
     bool MemberOf(std::vector<goap::Node>& set, const goap::WorldState& ws)
@@ -43,13 +43,18 @@ namespace
         return Find(set, ws) != end(set); 
     }
 
-    int CalculateHeuristic(const goap::WorldState& now, const goap::WorldState& goal)
+    int CalculateHeuristic(const goap::WorldState& now, const goap::WorldState& goal, const goap::DistanceFunctionMap& distanceFunctionMap)
     {
-        return now.distanceTo(goal);
+        return now.DistanceTo(goal, distanceFunctionMap);
     }
 }
 
-std::vector<goap::PlannedAction> goap::Planner::plan(const WorldState& start, const WorldState& goal, const std::vector<std::shared_ptr<Action>>& actions) {
+std::vector<goap::PlannedAction> goap::Planner::Plan(
+    const WorldState& start,
+    const WorldState& goal,
+    const std::vector<std::shared_ptr<Action>>& actions,
+    const DistanceFunctionMap& distanceFunctions)
+{
     if (start.meetsGoal(goal)) 
     {
         return std::vector<goap::PlannedAction>();
@@ -58,7 +63,7 @@ std::vector<goap::PlannedAction> goap::Planner::plan(const WorldState& start, co
     std::vector<Node> open;
     std::vector<Node> closed;
 
-    Node starting_node(goal, 0, CalculateHeuristic(start, goal), 0);
+    Node starting_node(goal, 0, CalculateHeuristic(start, goal, distanceFunctions), 0);
 
     open.push_back(std::move(starting_node));
 
@@ -68,7 +73,6 @@ std::vector<goap::PlannedAction> goap::Planner::plan(const WorldState& start, co
         // and hang onto it -- this is our latest node.
         Node& current(PopAndClose(open, closed));
 
-        // Is our current state the goal state? If so, we've found a path, yay.
         if (start.meetsGoal(current.ws_)) 
         {
             std::vector<PlannedAction> the_plan;
@@ -87,10 +91,9 @@ std::vector<goap::PlannedAction> goap::Planner::plan(const WorldState& start, co
             return the_plan;
         }
 
-        // Check each node REACHABLE from current -- in other words, where can we go from here?
         for (const auto& potential_action : actions) 
         {
-            if (potential_action->ResolvesAny(current.ws_)) 
+            if (potential_action->ResolvesAny(current.ws_, current.action_)) 
             {
                 WorldState toResolve(current.ws_);
                 goap::PlannedAction planned = potential_action->Resolve(toResolve);
@@ -106,7 +109,7 @@ std::vector<goap::PlannedAction> goap::Planner::plan(const WorldState& start, co
                 if (p_outcome_node == end(open)) 
                 {
                     // Make a new node, with current as its parent, recording G & H
-                    Node found(toResolve, current.g_ + potential_action->GetCost(), CalculateHeuristic(start, toResolve), current.id_, planned);
+                    Node found(toResolve, current.g_ + potential_action->GetCost(), CalculateHeuristic(start, toResolve, distanceFunctions), current.id_, planned);
                     // Add it to the open list (maintaining sort-order therein)
                     AddToOpenList(open, std::move(found));
                 }
@@ -117,7 +120,7 @@ std::vector<goap::PlannedAction> goap::Planner::plan(const WorldState& start, co
                     {
                         p_outcome_node->parent_id_ = current.id_;                  // make current its parent
                         p_outcome_node->g_ = current.g_ + potential_action->GetCost(); // recalc G & H
-                        p_outcome_node->h_ = CalculateHeuristic(start, toResolve);
+                        p_outcome_node->h_ = CalculateHeuristic(start, toResolve, distanceFunctions);
                         p_outcome_node->action_ = planned;
 
                         // resort open list to account for the new F

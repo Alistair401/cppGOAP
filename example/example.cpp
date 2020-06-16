@@ -47,7 +47,7 @@ int main()
     cook->AddEffect(new goap::SimpleEffect(HAS, nullptr, PIZZA));
 
     std::vector<std::shared_ptr<goap::Action>> actions{ eat, order, cook };
-    std::vector<goap::PlannedAction> plan = goap::Planner::plan(start, goal, actions);
+    std::vector<goap::PlannedAction> plan = goap::Planner::Plan(start, goal, actions);
 
     std::unordered_map<int, std::string> actionLookup;
     actionLookup[ORDER] = "ORDER";

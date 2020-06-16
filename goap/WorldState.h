@@ -10,7 +10,9 @@
 
 #include "Value.h"
 #include "WorldStateKey.h"
+#include "DistanceFunctionMap.h"
 #include <map>
+#include <functional>
 
 namespace goap
 {
@@ -42,7 +44,7 @@ namespace goap
          @param other the goal state to compare against
          @return the number of state-var differences between us and them
          */
-        int distanceTo(const WorldState& goal_state) const;
+        int DistanceTo(const WorldState& goal_state, const DistanceFunctionMap& distanceFunctions) const;
 
         /**
          Equality operator

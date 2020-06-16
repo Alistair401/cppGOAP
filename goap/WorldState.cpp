@@ -50,14 +50,20 @@ bool goap::WorldState::meetsGoal(const WorldState& goal_state) const {
     return true;
 }
 
-int goap::WorldState::distanceTo(const WorldState& goal_state) const {
+int goap::WorldState::DistanceTo(const WorldState& goal_state, const DistanceFunctionMap& distanceFunctions) const
+{
     int result = 0;
 
-    for (const auto& kv : goal_state.vars_) {
+    for (const auto& kv : goal_state.vars_) 
+    {
         auto itr = this->vars_.find(kv.first);
-        if (itr == end(vars_) || (itr->second == kv.second) == false) {
-            ++result;
+        const Value* value = nullptr;
+        if (itr != end(vars_))
+        {
+            value = &itr->second;
         }
+
+        result += distanceFunctions.Get(kv.first.variable)(kv.second, value);
     }
 
     return result;

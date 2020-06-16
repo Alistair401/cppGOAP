@@ -29,12 +29,12 @@ goap::PlannedAction& goap::PlannedAction::operator=(const PlannedAction& other)
     return *this;
 }
 
-int goap::PlannedAction::GetId()
+int goap::PlannedAction::GetId() const
 {
     return this->id_;
 }
 
-const goap::Value& goap::PlannedAction::GetValue()
+const goap::Value& goap::PlannedAction::GetValue() const
 {
     return this->value_;
 }

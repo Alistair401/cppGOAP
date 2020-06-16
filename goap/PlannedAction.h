@@ -12,8 +12,8 @@ namespace goap
         PlannedAction(const PlannedAction& other);
         PlannedAction& operator=(const PlannedAction& other);
 
-        int GetId();
-        const Value& GetValue();
+        int GetId() const;
+        const Value& GetValue() const;
     private:
         int id_;
         Value value_;

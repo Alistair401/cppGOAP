@@ -126,6 +126,7 @@
   <ItemGroup>
     <ClCompile Include="Action.cpp" />
     <ClCompile Include="ActionWithValue.cpp" />
+    <ClCompile Include="DistanceFunctionMap.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="PlannedAction.cpp" />
     <ClCompile Include="Planner.cpp" />
@@ -141,6 +142,7 @@
   <ItemGroup>
     <ClInclude Include="Action.h" />
     <ClInclude Include="ActionWithValue.h" />
+    <ClInclude Include="DistanceFunctionMap.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="PlannedAction.h" />
     <ClInclude Include="Planner.h" />

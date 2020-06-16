@@ -27,6 +27,7 @@ struct Tool
 
 enum ActionId
 {
+    NONE,
     UP,
     DOWN,
     LEFT,
@@ -47,6 +48,23 @@ std::int64_t ElegantPair(int x, int y)
     return (x >= y) ? (x * x + x + y) : (y * y + x);
 }
 
+ActionId OppositeAction(ActionId a)
+{
+    switch (a)
+    {
+    case UP:
+        return DOWN;
+    case DOWN:
+        return UP;
+    case LEFT:
+        return RIGHT;
+    case RIGHT:
+        return LEFT;
+    default:
+        return NONE;
+    }
+}
+
 int gridWidth = 10;
 int gridHeight = 10;
 int cellSize = 36; 
@@ -61,18 +79,27 @@ public:
     {
     }
 
-    virtual bool ResolvesAny(goap::WorldState& ws) const override
+    virtual bool ResolvesAny(goap::WorldState& ws, const std::optional<goap::PlannedAction>& next) const override
     {
+        if (next.has_value())
+        {
+            // Don't backtrack
+            if (next.value().GetId() == OppositeAction((ActionId)this->id_))
+            {
+                return false;
+            }
+        }
+
         int agentX = ws.vars_[{ POS_X, (void*)AgentId }].AsInt();
         int agentY = ws.vars_[{ POS_Y, (void*)AgentId }].AsInt();
 
         int sourceX = agentX + (this->x * -1);
         int sourceY = agentY + (this->y * -1);
 
-        bool xInRange = 0 <= sourceX && sourceX < gridWidth;
-        bool yInRange = 0 <= sourceY && sourceY < gridHeight;
-
-        return xInRange && yInRange;
+        return 0 <= sourceX && sourceX < gridWidth
+            && 0 <= sourceY && sourceY < gridHeight
+            && 0 <= agentX && agentX < gridWidth
+            && 0 <= agentY && agentY < gridHeight;
     }
 
     virtual goap::PlannedAction Resolve(goap::WorldState& ws) const override
@@ -129,6 +156,22 @@ int main(int argc, char** argv)
     actions.emplace_back(new MoveAction(DOWN, 0, 1));
     actions.emplace_back(new MoveAction(LEFT, -1, 0));
     actions.emplace_back(new MoveAction(RIGHT, 1, 0));
+
+    goap::DistanceFunction manhattanDistance = [](const goap::Value& a, const goap::Value* b)
+    {
+        if (b == nullptr)
+        {
+            return a.AsInt();
+        }
+        else
+        {
+            return std::abs(a.AsInt() - b->AsInt());
+        }
+    };
+
+    goap::DistanceFunctionMap distanceFunctions;
+    distanceFunctions.Set(POS_X, manhattanDistance);
+    distanceFunctions.Set(POS_Y, manhattanDistance);
 
     SDL_Window* window = NULL;
     SDL_Renderer* renderer = NULL;
@@ -238,7 +281,7 @@ int main(int argc, char** argv)
                 goal.Set(POS_X, (void*)AgentId, goalCell.x);
                 goal.Set(POS_Y, (void*)AgentId, goalCell.y);
                 
-                plan = goap::Planner::plan(start, goal, actions);
+                plan = goap::Planner::Plan(start, goal, actions);
                 std::reverse(plan.begin(), plan.end());
             }
         }

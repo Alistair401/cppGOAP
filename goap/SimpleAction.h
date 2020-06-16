@@ -12,7 +12,7 @@ namespace goap
         
         void AddEffect(Effect* e);
 
-        virtual bool ResolvesAny(WorldState& ws) const override;
+        virtual bool ResolvesAny(WorldState& ws, const std::optional<goap::PlannedAction>& next) const override;
         virtual PlannedAction Resolve(WorldState& ws) const override;
 
     private:

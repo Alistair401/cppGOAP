@@ -10,6 +10,7 @@
 
 #include <unordered_map>
 #include <memory>
+#include <optional>
 #include "Effect.h"
 #include "Precondition.h"
 #include "PlannedAction.h"
@@ -28,7 +29,7 @@ namespace goap {
     public:
         Action(int id, int cost);
 
-        virtual bool ResolvesAny(WorldState& ws) const = 0;
+        virtual bool ResolvesAny(WorldState& ws, const std::optional<goap::PlannedAction>& next) const = 0;
         virtual PlannedAction Resolve(WorldState& ws) const = 0;
 
         int GetCost() const { return cost_; }

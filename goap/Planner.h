@@ -12,6 +12,7 @@
 #include "PlannedAction.h"
 #include "Node.h"
 #include "WorldState.h"
+#include "DistanceFunctionMap.h"
 
 #include <ostream>
 #include <unordered_map>
@@ -32,6 +33,10 @@ namespace goap {
          @return a vector of Actions in REVERSE ORDER - use a reverse_iterator on this to get stepwise-order
          @exception std::runtime_error if no plan could be made with the available actions and states
          */
-        static std::vector<PlannedAction> plan(const WorldState& start, const WorldState& goal, const std::vector<std::shared_ptr<Action>>& actions);
+        static std::vector<PlannedAction> Plan(
+            const WorldState& start,
+            const WorldState& goal,
+            const std::vector<std::shared_ptr<Action>>& actions,
+            const DistanceFunctionMap& distanceFunctions = DistanceFunctionMap());
     };
 }
