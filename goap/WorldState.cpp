@@ -32,6 +32,12 @@ bool goap::WorldState::operator==(const WorldState& other) const {
 }
 
 bool goap::WorldState::meetsGoal(const WorldState& goal_state) const {
+    if (goal_state.vars_.size() > this->vars_.size())
+    {
+        return false;
+    }
+
+
     for (const auto& kvp : goal_state.vars_) 
     {
         auto maybeVariable = this->vars_.find(kvp.first);

@@ -19,7 +19,7 @@ namespace goap
     struct WorldState 
     {
         float priority_; // useful if this is a goal state, to distinguish from other possible goals
-        std::map<WorldStateKey, Value> vars_;
+        std::unordered_map<WorldStateKey, Value> vars_;
 
         WorldState();
         WorldState(const WorldState& other);
