@@ -3,36 +3,10 @@
 #include <algorithm>
 #include <cassert>
 
+#include "OpenSet.h"
+
 namespace 
 {
-    /**
-    Moves the given Node (an rvalue reference) into the 'open' list.
-    @param an rvalue reference to a Node that will be moved to the open list
-    */
-    void AddToOpenList(std::vector<goap::Node>& open, goap::Node&& n)
-    {
-        // insert maintaining sort order
-        auto it = std::lower_bound(begin(open),
-                                   end(open),
-                                   n);
-        open.emplace(it, std::move(n));
-    }
-
-    /**
-    Pops the first Node from the 'open' list, moves it to the 'closed' list, and
-    returns a reference to this newly-closed Node. Its behavior is undefined if
-    you call on an empty list.
-    @return a reference to the newly closed Node
-    */
-    goap::Node& PopAndClose(std::vector<goap::Node>& open, std::vector<goap::Node>& closed)
-    {
-        assert(!open.empty());
-        closed.push_back(std::move(open.front()));
-        open.erase(open.begin());
-
-        return closed.back();
-    }
-
     std::vector<goap::Node>::iterator Find(std::vector<goap::Node>& set, const goap::WorldState& ws)
     {
         return std::find_if(begin(set), end(set), [&](const goap::Node& n) { return ws.meetsGoal(n.ws_); });
@@ -60,18 +34,19 @@ std::vector<goap::PlannedAction> goap::Planner::Plan(
         return std::vector<goap::PlannedAction>();
     }
 
-    std::vector<Node> open;
+    OpenSet open;
     std::vector<Node> closed;
 
     Node starting_node(goal, 0, CalculateHeuristic(start, goal, distanceFunctions), 0);
 
-    open.push_back(std::move(starting_node));
+    open.Add(std::move(starting_node));
 
-    while (open.size() > 0) 
+    while (open.Size() > 0) 
     {
         // Look for Node with the lowest-F-score on the open list. Switch it to closed,
         // and hang onto it -- this is our latest node.
-        Node& current(PopAndClose(open, closed));
+        closed.push_back(std::move(open.Pop()));
+        Node& current = closed.back();
 
         if (start.meetsGoal(current.ws_)) 
         {
@@ -80,11 +55,7 @@ std::vector<goap::PlannedAction> goap::Planner::Plan(
             do 
             {
                 the_plan.push_back(current.action_.value());
-                auto itr = std::find_if(begin(open), end(open), [&](const Node& n) { return n.id_ == current.parent_id_; });
-                if (itr == end(open)) 
-                {
-                    itr = std::find_if(begin(closed), end(closed), [&](const Node& n) { return n.id_ == current.parent_id_; });
-                }
+                auto itr = std::find_if(begin(closed), end(closed), [&](const Node& n) { return n.id_ == current.parent_id_; });
                 current = *itr;
             } while (current.parent_id_ != 0);
 
@@ -105,13 +76,13 @@ std::vector<goap::PlannedAction> goap::Planner::Plan(
                 }
 
                 // Look for a Node with this WorldState on the open list.
-                auto p_outcome_node = Find(open, toResolve);
-                if (p_outcome_node == end(open)) 
+                Node* p_outcome_node = open.Find(toResolve);
+                if (p_outcome_node == nullptr) 
                 {
                     // Make a new node, with current as its parent, recording G & H
                     Node found(toResolve, current.g_ + potential_action->GetCost(), CalculateHeuristic(start, toResolve, distanceFunctions), current.id_, planned);
                     // Add it to the open list (maintaining sort-order therein)
-                    AddToOpenList(open, std::move(found));
+                    open.Add(std::move(found));
                 }
                 else 
                 {
@@ -125,7 +96,7 @@ std::vector<goap::PlannedAction> goap::Planner::Plan(
 
                         // resort open list to account for the new F
                         // sorting likely invalidates the p_outcome_node iterator, but we don't need it anymore
-                        std::sort(begin(open), end(open));
+                        open.Update(p_outcome_node->id_);
                     }
                 }
             }
