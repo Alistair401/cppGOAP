@@ -6,7 +6,7 @@ namespace goap
     {
     public:
         ActionWithValue(int id, int cost, Value value);
-        virtual PlannedAction Resolve(WorldState& ws) const override;
+        virtual PlannedAction Resolve(const WorldState& start, WorldState& ws) const override;
     private:
         Value value_;
     };

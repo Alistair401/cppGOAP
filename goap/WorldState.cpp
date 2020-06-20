@@ -28,7 +28,7 @@ void goap::WorldState::Erase(int variable, void* subject)
 }
 
 bool goap::WorldState::operator==(const WorldState& other) const {
-    return (vars_ == other.vars_);
+    return (this->vars_ == other.vars_);
 }
 
 bool goap::WorldState::meetsGoal(const WorldState& goal_state) const {
@@ -72,4 +72,26 @@ int goap::WorldState::DistanceTo(const WorldState& goal_state, const DistanceFun
     }
 
     return result;
+}
+
+void goap::WorldState::Satisfy(WorldState& goal) const
+{
+    for (auto it = goal.vars_.begin(); it != goal.vars_.end();)
+    {
+        auto maybeVariable = this->vars_.find(it->first);
+        if (maybeVariable != this->vars_.end() && maybeVariable->second == it->second)
+        {
+            it = goal.vars_.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
+}
+
+const goap::Value* goap::WorldState::Get(int variable, void* subject) const
+{
+    auto found = this->vars_.find({ variable, subject });
+    return found == this->vars_.end() ? nullptr : &found->second;
 }

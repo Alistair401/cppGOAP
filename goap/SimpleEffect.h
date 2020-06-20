@@ -9,7 +9,7 @@ namespace goap
         SimpleEffect(int variable, void* subject, bool value);
         SimpleEffect(int variable, void* subject, int value);
 
-        virtual bool ResolvesAny(WorldState& state) override;
+        virtual bool ResolvesAny(const WorldState& state) override;
         virtual void Resolve(WorldState& state) override;
 
     private:

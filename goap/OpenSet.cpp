@@ -36,7 +36,7 @@ void goap::OpenSet::Add(Node&& n)
 
 goap::Node* goap::OpenSet::Find(const goap::WorldState& ws)
 {
-    auto itr = std::find_if(begin(this->data), end(this->data), [&](const goap::Node& n) { return ws.meetsGoal(n.ws_); });
+    auto itr = std::find_if(begin(this->data), end(this->data), [&](const goap::Node& n) { return ws == n.ws_; });
     if (itr == end(this->data))
     {
         return nullptr;

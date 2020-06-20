@@ -30,8 +30,8 @@ namespace goap
     public:
         Action(int id, int cost);
 
-        virtual bool ResolvesAny(WorldState& ws) const = 0;
-        virtual PlannedAction Resolve(WorldState& ws) const = 0;
+        virtual bool ResolvesAny(const WorldState& start, const WorldState& ws) const = 0;
+        virtual PlannedAction Resolve(const WorldState& start, WorldState& ws) const = 0;
 
         int GetCost() const { return cost_; }
         int Id() const { return id_; }

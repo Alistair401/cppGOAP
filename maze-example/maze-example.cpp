@@ -65,8 +65,7 @@ ActionId OppositeAction(ActionId a)
     }
 }
 
-int gridWidth = 10;
-int gridHeight = 10;
+int gridSize = 10;
 int cellSize = 36; 
 
 class MoveAction : public goap::Action
@@ -79,24 +78,42 @@ public:
     {
     }
 
-    virtual bool ResolvesAny(goap::WorldState& ws) const override
+    virtual bool ResolvesAny(const goap::WorldState& start, const goap::WorldState& ws) const override
     {
-        int agentX = ws.vars_[{ POS_X, (void*)AgentId }].AsInt();
-        int agentY = ws.vars_[{ POS_Y, (void*)AgentId }].AsInt();
+        // Prune this search if there are unresolvable walkable cells
+        for (int x = 0; x < gridSize; x++)
+        {
+            for (int y = 0; y < gridSize; y++)
+            {
+                if (ws.Get(WALKABLE, (void*)ElegantPair(x, y)) != nullptr)
+                {
+                    return false;
+                }
+            }
+        }
+
+        const goap::Value* maybeX = ws.Get(POS_X, (void*)AgentId);
+        const goap::Value* maybeY = ws.Get(POS_Y, (void*)AgentId);
+        
+        int agentX = maybeX == nullptr ? start.Get(POS_X, (void*)AgentId)->AsInt() : maybeX->AsInt();
+        int agentY = maybeY == nullptr ? start.Get(POS_Y, (void*)AgentId)->AsInt() : maybeY->AsInt();
 
         int sourceX = agentX + (this->x * -1);
         int sourceY = agentY + (this->y * -1);
 
-        return 0 <= sourceX && sourceX < gridWidth
-            && 0 <= sourceY && sourceY < gridHeight
-            && 0 <= agentX && agentX < gridWidth
-            && 0 <= agentY && agentY < gridHeight;
+        return 0 <= sourceX && sourceX < gridSize
+            && 0 <= sourceY && sourceY < gridSize
+            && 0 <= agentX && agentX < gridSize
+            && 0 <= agentY && agentY < gridSize;
     }
 
-    virtual goap::PlannedAction Resolve(goap::WorldState& ws) const override
+    virtual goap::PlannedAction Resolve(const goap::WorldState& start, goap::WorldState& ws) const override
     {
-        int agentX = ws.vars_[{ POS_X, (void*)AgentId }].AsInt();
-        int agentY = ws.vars_[{ POS_Y, (void*)AgentId }].AsInt();
+        const goap::Value* maybeX = ws.Get(POS_X, (void*)AgentId);
+        const goap::Value* maybeY = ws.Get(POS_Y, (void*)AgentId);
+
+        int agentX = maybeX == nullptr ? start.Get(POS_X, (void*)AgentId)->AsInt() : maybeX->AsInt();
+        int agentY = maybeY == nullptr ? start.Get(POS_Y, (void*)AgentId)->AsInt() : maybeY->AsInt();
 
         int sourceX = agentX + (this->x * -1);
         int sourceY = agentY + (this->y * -1);
@@ -130,10 +147,10 @@ int main(int argc, char** argv)
         Tool{ CellData::GOAL , "Goal"  }
     };
 
-    std::vector<std::vector<CellData>> gridData(gridHeight, std::vector<CellData>(gridWidth, CellData::EMPTY));
+    std::vector<std::vector<CellData>> gridData(gridSize, std::vector<CellData>(gridSize, CellData::EMPTY));
 
-    int windowWidth = (gridWidth * cellSize) + 1;
-    int windowHeight = (gridHeight * cellSize) + 1;
+    int windowWidth = (gridSize * cellSize) + 1;
+    int windowHeight = (gridSize * cellSize) + 1;
 
     float tickTime = 500.0;
 
@@ -215,9 +232,9 @@ int main(int argc, char** argv)
             const Tool& t = tools[toolIndex];
             if (t.cell == CellData::AGENT || t.cell == CellData::GOAL) 
             {
-                for (int x = 0; x < gridWidth; x++)
+                for (int x = 0; x < gridSize; x++)
                 {
-                    for (int y = 0; y < gridHeight; y++)
+                    for (int y = 0; y < gridSize; y++)
                     {
                         if (gridData[y][x] == t.cell)
                         {
@@ -239,9 +256,9 @@ int main(int argc, char** argv)
 
             goap::WorldState start;
 
-            for (int x = 0; x < gridWidth; x++)
+            for (int x = 0; x < gridSize; x++)
             {
-                for (int y = 0; y < gridHeight; y++) 
+                for (int y = 0; y < gridSize; y++) 
                 {
                     CellData cell = gridData[y][x];
 
@@ -272,7 +289,7 @@ int main(int argc, char** argv)
                 goal.Set(POS_X, (void*)AgentId, goalCell.x);
                 goal.Set(POS_Y, (void*)AgentId, goalCell.y);
                 
-                plan = goap::Planner::Plan(start, goal, actions);
+                plan = goap::Planner::Plan(start, goal, actions, distanceFunctions);
                 std::reverse(plan.begin(), plan.end());
             }
         }
@@ -288,9 +305,9 @@ int main(int argc, char** argv)
                 goap::PlannedAction a = plan.back();
                 
                 SDL_Point agentCell{};
-                for (int x = 0; x < gridWidth; x++) 
+                for (int x = 0; x < gridSize; x++) 
                 {
-                    for (int y = 0; y < gridHeight; y++) 
+                    for (int y = 0; y < gridSize; y++) 
                     {
                         if (gridData[y][x] == CellData::AGENT) 
                         {
@@ -329,9 +346,9 @@ int main(int argc, char** argv)
         SDL_SetRenderDrawColor(renderer, gridBackgroundColour.r, gridBackgroundColour.g, gridBackgroundColour.b, gridBackgroundColour.a);
         SDL_RenderClear(renderer);
 
-        for (int x = 0; x < gridWidth; x++)
+        for (int x = 0; x < gridSize; x++)
         {
-            for (int y = 0; y < gridHeight; y++)
+            for (int y = 0; y < gridSize; y++)
             {
                 CellData cell = gridData[y][x];
 
@@ -364,12 +381,12 @@ int main(int argc, char** argv)
 
         SDL_SetRenderDrawColor(renderer, gridLineColour.r, gridLineColour.g, gridLineColour.b, gridLineColour.a);
 
-        for (int x = 0; x < 1 + gridWidth * cellSize; x += cellSize)
+        for (int x = 0; x < 1 + gridSize * cellSize; x += cellSize)
         {
             SDL_RenderDrawLine(renderer, x, 0, x, windowHeight);
         }
 
-        for (int y = 0; y < 1 + gridHeight * cellSize; y += cellSize)
+        for (int y = 0; y < 1 + gridSize * cellSize; y += cellSize)
         {
             SDL_RenderDrawLine(renderer, 0, y, windowWidth, y);
         }

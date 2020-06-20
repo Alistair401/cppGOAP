@@ -46,6 +46,10 @@ namespace goap
          */
         int DistanceTo(const WorldState& goal_state, const DistanceFunctionMap& distanceFunctions) const;
 
+        void Satisfy(WorldState& goal) const;
+
+        const Value* Get(int variable, void* subject) const;
+
         /**
          Equality operator
          @param other the other worldstate to compare to

@@ -15,7 +15,7 @@ void goap::SimpleAction::AddEffect(Effect* e)
     this->effects_.emplace_back(e);
 }
 
-bool goap::SimpleAction::ResolvesAny(WorldState& ws) const
+bool goap::SimpleAction::ResolvesAny(const WorldState& start, const WorldState& ws) const
 {
     for (const auto& effect : this->effects_)
     {
@@ -28,7 +28,7 @@ bool goap::SimpleAction::ResolvesAny(WorldState& ws) const
     return false;
 }
 
-goap::PlannedAction goap::SimpleAction::Resolve(WorldState& ws) const
+goap::PlannedAction goap::SimpleAction::Resolve(const WorldState& start, WorldState& ws) const
 {
     for (const auto& effect : this->effects_)
     {

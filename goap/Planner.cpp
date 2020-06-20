@@ -9,7 +9,7 @@ namespace
 {
     std::vector<goap::Node>::iterator Find(std::vector<goap::Node>& set, const goap::WorldState& ws)
     {
-        return std::find_if(begin(set), end(set), [&](const goap::Node& n) { return ws.meetsGoal(n.ws_); });
+        return std::find_if(begin(set), end(set), [&](const goap::Node& n) { return n.ws_ == ws; });
     }
 
     bool MemberOf(std::vector<goap::Node>& set, const goap::WorldState& ws)
@@ -34,10 +34,13 @@ std::vector<goap::PlannedAction> goap::Planner::Plan(
         return std::vector<goap::PlannedAction>();
     }
 
+    WorldState unsatisfied(goal);
+    start.Satisfy(unsatisfied);
+
     OpenSet open;
     std::vector<Node> closed;
 
-    Node starting_node(goal, 0, CalculateHeuristic(start, goal, distanceFunctions), 0);
+    Node starting_node(unsatisfied, 0, CalculateHeuristic(start, unsatisfied, distanceFunctions), 0);
 
     open.Add(std::move(starting_node));
 
@@ -64,10 +67,11 @@ std::vector<goap::PlannedAction> goap::Planner::Plan(
 
         for (const auto& potential_action : actions) 
         {
-            if (potential_action->ResolvesAny(current.ws_)) 
+            if (potential_action->ResolvesAny(start, current.ws_)) 
             {
                 WorldState toResolve(current.ws_);
-                goap::PlannedAction planned = potential_action->Resolve(toResolve);
+                goap::PlannedAction planned = potential_action->Resolve(start, toResolve);
+                start.Satisfy(toResolve);
 
                 // Skip if already closed
                 if (MemberOf(closed, toResolve)) 
@@ -87,15 +91,14 @@ std::vector<goap::PlannedAction> goap::Planner::Plan(
                 else 
                 {
                     // check if the current G is better than the recorded G
-                    if (current.g_ + potential_action->GetCost() < p_outcome_node->g_) 
+                    int tentativeCost = current.g_ + potential_action->GetCost();
+                    if (tentativeCost < p_outcome_node->g_) 
                     {
-                        p_outcome_node->parent_id_ = current.id_;                  // make current its parent
-                        p_outcome_node->g_ = current.g_ + potential_action->GetCost(); // recalc G & H
+                        p_outcome_node->parent_id_ = current.id_;
+                        p_outcome_node->g_ = tentativeCost;
                         p_outcome_node->h_ = CalculateHeuristic(start, toResolve, distanceFunctions);
                         p_outcome_node->action_ = planned;
 
-                        // resort open list to account for the new F
-                        // sorting likely invalidates the p_outcome_node iterator, but we don't need it anymore
                         open.Update(p_outcome_node->id_);
                     }
                 }
