@@ -43,3 +43,8 @@ bool goap::Value::operator==(const Value& other) const
 {
     return this->data == other.data;
 }
+
+bool goap::Value::operator!=(const Value& other) const
+{
+    return this->data != other.data;
+}

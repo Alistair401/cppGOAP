@@ -37,7 +37,6 @@ bool goap::WorldState::meetsGoal(const WorldState& goal_state) const {
         return false;
     }
 
-
     for (const auto& kvp : goal_state.vars_) 
     {
         auto maybeVariable = this->vars_.find(kvp.first);
@@ -47,7 +46,7 @@ bool goap::WorldState::meetsGoal(const WorldState& goal_state) const {
             return false;
         }
 
-        if ((maybeVariable->second == kvp.second) == false) 
+        if (maybeVariable->second != kvp.second) 
         {
             return false;
         }

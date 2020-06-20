@@ -79,17 +79,8 @@ public:
     {
     }
 
-    virtual bool ResolvesAny(goap::WorldState& ws, const std::optional<goap::PlannedAction>& next) const override
+    virtual bool ResolvesAny(goap::WorldState& ws) const override
     {
-        if (next.has_value())
-        {
-            // Don't backtrack
-            if (next.value().GetId() == OppositeAction((ActionId)this->id_))
-            {
-                return false;
-            }
-        }
-
         int agentX = ws.vars_[{ POS_X, (void*)AgentId }].AsInt();
         int agentY = ws.vars_[{ POS_Y, (void*)AgentId }].AsInt();
 

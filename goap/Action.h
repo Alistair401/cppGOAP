@@ -15,7 +15,8 @@
 #include "Precondition.h"
 #include "PlannedAction.h"
 
-namespace goap {
+namespace goap 
+{
     struct WorldState;
 
     class Action 
@@ -29,7 +30,7 @@ namespace goap {
     public:
         Action(int id, int cost);
 
-        virtual bool ResolvesAny(WorldState& ws, const std::optional<goap::PlannedAction>& next) const = 0;
+        virtual bool ResolvesAny(WorldState& ws) const = 0;
         virtual PlannedAction Resolve(WorldState& ws) const = 0;
 
         int GetCost() const { return cost_; }

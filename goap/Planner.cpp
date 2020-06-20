@@ -64,7 +64,7 @@ std::vector<goap::PlannedAction> goap::Planner::Plan(
 
         for (const auto& potential_action : actions) 
         {
-            if (potential_action->ResolvesAny(current.ws_, current.action_)) 
+            if (potential_action->ResolvesAny(current.ws_)) 
             {
                 WorldState toResolve(current.ws_);
                 goap::PlannedAction planned = potential_action->Resolve(toResolve);

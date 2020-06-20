@@ -27,6 +27,7 @@ namespace goap
         int AsInt() const;
 
         bool operator==(const Value& other) const;
+        bool operator!=(const Value& other) const;
     private:
         std::variant<std::monostate, bool, float, int> data;
     };
