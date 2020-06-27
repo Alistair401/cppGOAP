@@ -14,13 +14,7 @@ goap::SimpleEffect::SimpleEffect(int variable, void* subject, int value)
 {
 }
 
-bool goap::SimpleEffect::ResolvesAny(const WorldState& state)
+void goap::SimpleEffect::Apply(WorldState& state)
 {
-    auto found = state.vars_.find({ this->variable, this->subject });
-    return found != state.vars_.end() && found->second == this->value;
-}
-
-void goap::SimpleEffect::Resolve(WorldState& state)
-{
-    state.Erase(this->variable, this->subject);
+    state.Set(this->variable, this->subject, this->value);
 }

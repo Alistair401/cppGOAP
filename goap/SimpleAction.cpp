@@ -15,29 +15,14 @@ void goap::SimpleAction::AddEffect(Effect* e)
     this->effects_.emplace_back(e);
 }
 
-bool goap::SimpleAction::ResolvesAny(const WorldState& start, const WorldState& ws) const
+goap::PlannedAction goap::SimpleAction::Act(const WorldState& state, WorldState& preconditions, WorldState& effects)
 {
-    for (const auto& effect : this->effects_)
-    {
-        if (effect->ResolvesAny(ws)) 
-        {
-            return true;
-        }
+    for (const auto& effect : this->effects_) {
+        effect->Apply(effects);
     }
 
-    return false;
-}
-
-goap::PlannedAction goap::SimpleAction::Resolve(const WorldState& start, WorldState& ws) const
-{
-    for (const auto& effect : this->effects_)
-    {
-        effect->Resolve(ws);
-    }
-
-    for (const auto& precondition : this->preconditions_)
-    {
-        precondition->Apply(ws);
+    for (const auto& precondition : this->preconditions_) {
+        precondition->Apply(preconditions);
     }
 
     return PlannedAction(this->id_);

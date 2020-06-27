@@ -1,52 +1,39 @@
 #include "WorldState.h"
+#include <cassert>
 
-goap::WorldState::WorldState()
-    : priority_(0)
+void goap::WorldState::Set(int variable, void* subject, Value value)
 {
+    this->values_[{ variable, subject }] = value;
 }
 
-goap::WorldState::WorldState(const WorldState& other)
-    : priority_(other.priority_)
+const goap::Value* goap::WorldState::Get(int variable, void* subject) const
 {
-    this->vars_ = other.vars_;
+    auto found = this->values_.find({ variable, subject });
+    return found == this->values_.end() ? nullptr : &found->second;
 }
 
-goap::WorldState& goap::WorldState::operator=(const WorldState& other) {
-    this->priority_ = other.priority_;
-    this->vars_ = other.vars_;
-    return *this;
-}
-
-void goap::WorldState::Set(int variable, void* subject, const Value& value)
+int goap::WorldState::DistanceTo(const WorldState& other) const
 {
-    this->vars_[{ variable, subject }] = value;
-}
+    int result = 0;
 
-void goap::WorldState::Erase(int variable, void* subject)
-{
-    this->vars_.erase({ variable, subject });
-}
-
-bool goap::WorldState::operator==(const WorldState& other) const {
-    return (this->vars_ == other.vars_);
-}
-
-bool goap::WorldState::meetsGoal(const WorldState& goal_state) const {
-    if (goal_state.vars_.size() > this->vars_.size())
+    for (const auto& kv : other.values_)
     {
-        return false;
+        auto itr = this->values_.find(kv.first);
+        if (itr == this->values_.end() || itr->second != kv.second)
+        {
+            result++;
+        }
     }
 
-    for (const auto& kvp : goal_state.vars_) 
+    return result;
+}
+
+bool goap::WorldState::Satisfies(const WorldState& other) const
+{
+    for (const auto& kv : other.values_)
     {
-        auto maybeVariable = this->vars_.find(kvp.first);
-
-        if (maybeVariable == this->vars_.end()) 
-        {
-            return false;
-        }
-
-        if (maybeVariable->second != kvp.second) 
+        auto itr = this->values_.find(kv.first);
+        if (itr == this->values_.end() || itr->second != kv.second)
         {
             return false;
         }
@@ -55,43 +42,68 @@ bool goap::WorldState::meetsGoal(const WorldState& goal_state) const {
     return true;
 }
 
-int goap::WorldState::DistanceTo(const WorldState& goal_state, const DistanceFunctionMap& distanceFunctions) const
+bool goap::WorldState::TryResolve(const WorldState& other)
 {
-    int result = 0;
-
-    for (const auto& kv : goal_state.vars_) 
+    int resolved = 0;
+    for (const auto& kv : other.values_)
     {
-        auto itr = this->vars_.find(kv.first);
-        const Value* value = nullptr;
-        if (itr != end(vars_))
+        auto itr = this->values_.find(kv.first);
+        if (itr != this->values_.end())
         {
-            value = &itr->second;
-        }
-
-        result += distanceFunctions.Get(kv.first.variable)(kv.second, value);
-    }
-
-    return result;
-}
-
-void goap::WorldState::Satisfy(WorldState& goal) const
-{
-    for (auto it = goal.vars_.begin(); it != goal.vars_.end();)
-    {
-        auto maybeVariable = this->vars_.find(it->first);
-        if (maybeVariable != this->vars_.end() && maybeVariable->second == it->second)
-        {
-            it = goal.vars_.erase(it);
-        }
-        else
-        {
-            ++it;
+            if (itr->second == kv.second)
+            {
+                this->values_.erase(kv.first);
+                resolved++;
+            } 
+            else
+            {
+                return false;
+            }
         }
     }
+    return resolved != 0;
 }
 
-const goap::Value* goap::WorldState::Get(int variable, void* subject) const
+bool goap::WorldState::TryAdd(const WorldState& other)
 {
-    auto found = this->vars_.find({ variable, subject });
-    return found == this->vars_.end() ? nullptr : &found->second;
+    for (const auto& kv : other.values_)
+    {
+        auto itr = this->values_.find(kv.first);
+        
+        if (itr != this->values_.end() && itr->second != kv.second)
+        {
+            return false;
+        }
+
+        this->values_[kv.first] = kv.second;
+    }
+
+    return true;
+}
+
+bool goap::WorldState::TryApply(const WorldState& other)
+{
+    for (const auto& kv : other.values_)
+    {
+        auto itr = this->values_.find(kv.first);
+
+        if (itr != this->values_.end() && itr->second == kv.second)
+        {
+            return false;
+        }
+
+        this->values_[kv.first] = kv.second;
+    }
+
+    return true;
+}
+
+{
+    {
+    }
+}
+
+bool goap::WorldState::operator==(const WorldState& other) const
+{
+    return this->values_ == other.values_;
 }

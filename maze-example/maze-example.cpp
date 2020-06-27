@@ -48,25 +48,13 @@ std::int64_t ElegantPair(int x, int y)
     return (x >= y) ? (x * x + x + y) : (y * y + x);
 }
 
-ActionId OppositeAction(ActionId a)
-{
-    switch (a)
-    {
-    case UP:
-        return DOWN;
-    case DOWN:
-        return UP;
-    case LEFT:
-        return RIGHT;
-    case RIGHT:
-        return LEFT;
-    default:
-        return NONE;
-    }
-}
-
-int gridSize = 10;
+int gridSize = 7;
 int cellSize = 36; 
+
+bool InBounds(int x, int y)
+{
+    return 0 <= x && x < gridSize && 0 <= y && y < gridSize;
+}
 
 class MoveAction : public goap::Action
 {
@@ -78,52 +66,73 @@ public:
     {
     }
 
-    virtual bool ResolvesAny(const goap::WorldState& start, const goap::WorldState& ws) const override
+    virtual goap::PlannedAction Act(const goap::WorldState& goal, goap::WorldState& preconditions, goap::WorldState& effects) override
     {
-        // Prune this search if there are unresolvable walkable cells
-        for (int x = 0; x < gridSize; x++)
+        int goalX = goal.Get(POS_X, (void*)AgentId)->AsInt();
+        int goalY = goal.Get(POS_Y, (void*)AgentId)->AsInt();
+
+        int sourceX = goalX + (this->x * -1);
+        int sourceY = goalY + (this->y * -1);
+
+        if (!InBounds(sourceX, sourceY))
         {
-            for (int y = 0; y < gridSize; y++)
-            {
-                if (ws.Get(WALKABLE, (void*)ElegantPair(x, y)) != nullptr)
-                {
-                    return false;
-                }
-            }
+            return goap::PlannedAction::Fail();
         }
 
-        const goap::Value* maybeX = ws.Get(POS_X, (void*)AgentId);
-        const goap::Value* maybeY = ws.Get(POS_Y, (void*)AgentId);
-        
-        int agentX = maybeX == nullptr ? start.Get(POS_X, (void*)AgentId)->AsInt() : maybeX->AsInt();
-        int agentY = maybeY == nullptr ? start.Get(POS_Y, (void*)AgentId)->AsInt() : maybeY->AsInt();
+        preconditions.Set(POS_X, (void*)AgentId, sourceX);
+        preconditions.Set(POS_Y, (void*)AgentId, sourceY);
+        preconditions.Set(WALKABLE, (void*)ElegantPair(sourceX, sourceY), true);
+        preconditions.Set(WALKABLE, (void*)ElegantPair(goalX, goalY), true);
 
-        int sourceX = agentX + (this->x * -1);
-        int sourceY = agentY + (this->y * -1);
+        effects.Set(POS_X, (void*)AgentId, goalX);
+        effects.Set(POS_Y, (void*)AgentId, goalY);
 
-        return 0 <= sourceX && sourceX < gridSize
-            && 0 <= sourceY && sourceY < gridSize
-            && 0 <= agentX && agentX < gridSize
-            && 0 <= agentY && agentY < gridSize;
+        return goap::PlannedAction(this->id_, 0);
     }
 
-    virtual goap::PlannedAction Resolve(const goap::WorldState& start, goap::WorldState& ws) const override
+private:
+    int x;
+    int y;
+};
+
+class PushAction : public goap::Action
+{
+public:
+    PushAction(int id, int x, int y)
+        : goap::Action(id, 2)
+        , x(x)
+        , y(y)
     {
-        const goap::Value* maybeX = ws.Get(POS_X, (void*)AgentId);
-        const goap::Value* maybeY = ws.Get(POS_Y, (void*)AgentId);
+    }
+    
+    virtual goap::PlannedAction Act(const goap::WorldState& goal, goap::WorldState& preconditions, goap::WorldState& effects) override
+    {
+        int goalX = goal.Get(POS_X, (void*)AgentId)->AsInt();
+        int goalY = goal.Get(POS_Y, (void*)AgentId)->AsInt();
 
-        int agentX = maybeX == nullptr ? start.Get(POS_X, (void*)AgentId)->AsInt() : maybeX->AsInt();
-        int agentY = maybeY == nullptr ? start.Get(POS_Y, (void*)AgentId)->AsInt() : maybeY->AsInt();
+        int sourceX = goalX + (this->x * -1);
+        int sourceY = goalY + (this->y * -1);
 
-        int sourceX = agentX + (this->x * -1);
-        int sourceY = agentY + (this->y * -1);
+        int behindBlockX = goalX + this->x;
+        int behindBlockY = goalY + this->y;
 
-        ws.Set(POS_X, (void*)AgentId, sourceX);
-        ws.Set(POS_Y, (void*)AgentId, sourceY);
+        if (!(InBounds(sourceX, sourceY) && InBounds(behindBlockX, behindBlockY)))
+        {
+            return goap::PlannedAction::Fail();
+        }
 
-        ws.Set(WALKABLE, (void*)ElegantPair(agentX, agentY), true);
+        preconditions.Set(POS_X, (void*)AgentId, sourceX);
+        preconditions.Set(POS_Y, (void*)AgentId, sourceY);
+        preconditions.Set(WALKABLE, (void*)ElegantPair(sourceX, sourceY), true);
+        preconditions.Set(WALKABLE, (void*)ElegantPair(goalX, goalY), false);
+        preconditions.Set(WALKABLE, (void*)ElegantPair(behindBlockX, behindBlockY), true);
 
-        return goap::PlannedAction(this->id_);
+        effects.Set(POS_X, (void*)AgentId, goalX);
+        effects.Set(POS_Y, (void*)AgentId, goalY);
+        effects.Set(WALKABLE, (void*)ElegantPair(goalX, goalY), true);
+        effects.Set(WALKABLE, (void*)ElegantPair(behindBlockX, behindBlockY), false);
+
+        return goap::PlannedAction(this->id_, 1);
     }
 
 private:
@@ -164,6 +173,11 @@ int main(int argc, char** argv)
     actions.emplace_back(new MoveAction(DOWN, 0, 1));
     actions.emplace_back(new MoveAction(LEFT, -1, 0));
     actions.emplace_back(new MoveAction(RIGHT, 1, 0));
+
+    actions.emplace_back(new PushAction(UP, 0, -1));
+    actions.emplace_back(new PushAction(DOWN, 0, 1));
+    actions.emplace_back(new PushAction(LEFT, -1, 0));
+    actions.emplace_back(new PushAction(RIGHT, 1, 0));
 
     goap::DistanceFunction manhattanDistance = [](const goap::Value& a, const goap::Value* b)
     {
@@ -286,6 +300,7 @@ int main(int argc, char** argv)
                 start.Set(POS_Y, (void*)AgentId, agentCell.y);
 
                 goap::WorldState goal;
+
                 goal.Set(POS_X, (void*)AgentId, goalCell.x);
                 goal.Set(POS_Y, (void*)AgentId, goalCell.y);
                 
@@ -318,24 +333,34 @@ int main(int argc, char** argv)
                     }
                 }
 
-                int newX = agentCell.x;
-                int newY = agentCell.y;
+                int moveX = 0;
+                int moveY = 0;
+                
                 switch (a.GetId())
                 {
                 case UP:
-                    newY--;
+                    moveY = -1;
                     break;
                 case DOWN:
-                    newY++;
+                    moveY = 1;
                     break;
                 case LEFT:
-                    newX--;
+                    moveX = -1;
                     break;
                 case RIGHT:
-                    newX++;
+                    moveX = 1;
                     break;
                 }
-                gridData[newY][newX] = CellData::AGENT;
+
+                int destinationX = agentCell.x + moveX;
+                int destinationY = agentCell.y + moveY;
+
+                if (gridData[destinationY][destinationX] == CellData::WALL)
+                {
+                    gridData[destinationY + moveY][destinationX + moveX] = CellData::WALL;
+                }
+
+                gridData[destinationY][destinationX] = CellData::AGENT;
                 
                 plan.pop_back();
             }

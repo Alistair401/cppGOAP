@@ -24,15 +24,6 @@ namespace goap {
         Planner() = delete;
         Planner(const Planner& other) = delete;
 
-        /**
-         Actually attempt to formulate a plan to get from start to goal, given a pool of
-         available actions.
-         @param start the starting worldstate
-         @param goal the goal worldstate
-         @param actions the available action pool
-         @return a vector of Actions in REVERSE ORDER - use a reverse_iterator on this to get stepwise-order
-         @exception std::runtime_error if no plan could be made with the available actions and states
-         */
         static std::vector<PlannedAction> Plan(
             const WorldState& start,
             const WorldState& goal,

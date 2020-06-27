@@ -6,6 +6,8 @@ namespace goap
     class PlannedAction
     {
     public:
+        static PlannedAction Fail();
+
         PlannedAction();
         PlannedAction(int id);
         PlannedAction(int id, const Value& value);
@@ -14,7 +16,9 @@ namespace goap
 
         int GetId() const;
         const Value& GetValue() const;
+        bool Success() const;
     private:
+        bool success_;
         int id_;
         Value value_;
     };

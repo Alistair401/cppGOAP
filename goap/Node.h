@@ -27,12 +27,6 @@ namespace goap {
         Node(const WorldState state, int g, int h, int parent_id);
         Node(const WorldState state, int g, int h, int parent_id, const PlannedAction& action);
 
-        // F -- which is simply G+H -- is autocalculated
-        int f() const {
-            return g_ + h_;
-        }
+        int f() const;
     };
-
-    bool operator<(const Node& lhs, const Node& rhs);
-
 }

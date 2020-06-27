@@ -6,8 +6,8 @@ goap::ActionWithValue::ActionWithValue(int id, int cost, Value value)
 {
 }
 
-goap::PlannedAction goap::ActionWithValue::Resolve(const WorldState& start, WorldState& ws) const
+goap::PlannedAction goap::ActionWithValue::Act(const WorldState& state, WorldState& preconditions, WorldState& effects)
 {
-    SimpleAction::Resolve(start, ws);
+    SimpleAction::Act(state, preconditions, effects);
     return PlannedAction(this->id_, this->value_);
 }

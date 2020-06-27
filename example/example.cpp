@@ -28,7 +28,6 @@ enum ObjectId
 int main()
 {
     goap::WorldState start;
-    start.Set(HUNGRY, nullptr, true);
     start.Set(HAS, nullptr, NUMBER);
 
     goap::WorldState goal;
