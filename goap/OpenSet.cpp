@@ -44,15 +44,18 @@ int goap::OpenSet::Size()
     return static_cast<int>(this->data.Size());
 }
 
-void goap::OpenSet::Update(int id)
+void goap::OpenSet::Update(const goap::Node& n)
 {
-    int index = static_cast<int>(this->data.IndexOf(id));
+    int index = static_cast<int>(this->data.IndexOf(n.ws_));
     this->UpHeapBubble(index);
 }
 
 void goap::OpenSet::Swap(int indexA, int indexB)
 {
-    std::swap(this->data.At(indexA), this->data.At(indexB));
+    if (indexA != indexB)
+    {
+        this->data.Swap(indexA, indexB);
+    }
 }
 
 void goap::OpenSet::UpHeapBubble(int index)

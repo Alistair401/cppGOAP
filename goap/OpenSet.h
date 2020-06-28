@@ -10,7 +10,7 @@ namespace goap
             void Add(Node&& n);
             Node* Find(const goap::WorldState& ws);
             int Size();
-            void Update(int id);
+            void Update(const goap::Node& n);
         private:
             void Swap(int indexA, int indexB);
             void UpHeapBubble(int index);

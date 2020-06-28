@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <unordered_set>
 #include "Node.h"
 
 namespace goap
@@ -19,7 +20,13 @@ namespace goap
         void PopBack();
         std::size_t Size() const;
         std::size_t IndexOf(int id) const;
+        std::size_t IndexOf(const WorldState& ws) const;
+        void Swap(int ia, int ib);
     private:
+
+        void EraseHashIndexPair(size_t hash, size_t index);
+
+        std::multimap<size_t, size_t> hashIndices_;
         std::vector<NodeHashPair> data_;
     };
 }

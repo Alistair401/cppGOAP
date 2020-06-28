@@ -99,7 +99,7 @@ class PushAction : public goap::Action
 {
 public:
     PushAction(int id, int x, int y)
-        : goap::Action(id, 2)
+        : goap::Action(id, 1)
         , x(x)
         , y(y)
     {

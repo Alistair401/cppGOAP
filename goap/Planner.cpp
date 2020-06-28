@@ -78,7 +78,7 @@ std::vector<goap::PlannedAction> goap::Planner::Plan(
                     p_outcome_node->h_ = start.DistanceTo(discovered);
                     p_outcome_node->action_ = planned;
 
-                    open.Update(p_outcome_node->id_);
+                    open.Update(*p_outcome_node);
                 }
             }
         }
