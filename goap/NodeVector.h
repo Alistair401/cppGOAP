@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <unordered_set>
+#include <map>
 #include "Node.h"
 
 namespace goap

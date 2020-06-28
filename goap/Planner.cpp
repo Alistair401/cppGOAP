@@ -1,7 +1,6 @@
 #include "Planner.h"
 
 #include <algorithm>
-#include <cassert>
 
 #include "OpenSet.h"
 
@@ -14,7 +13,7 @@ std::vector<goap::PlannedAction> goap::Planner::Plan(
     OpenSet open;
     NodeVector closed;
 
-    Node initialNode(goal, 0, start.DistanceTo(goal), 0);
+    Node initialNode(goal, 0, start.DistanceTo(goal, distanceFunctions), 0);
 
     open.Add(std::move(initialNode));
 
@@ -65,7 +64,7 @@ std::vector<goap::PlannedAction> goap::Planner::Plan(
             Node* p_outcome_node = open.Find(discovered);
             if (p_outcome_node == nullptr) 
             {
-                Node found(discovered, current.g_ + potential_action->GetCost(), start.DistanceTo(discovered), current.id_, planned);
+                Node found(discovered, current.g_ + potential_action->GetCost(), start.DistanceTo(discovered, distanceFunctions), current.id_, planned);
                 open.Add(std::move(found));
             }
             else
@@ -75,7 +74,7 @@ std::vector<goap::PlannedAction> goap::Planner::Plan(
                 {
                     p_outcome_node->parent_id_ = current.id_;
                     p_outcome_node->g_ = tentativeCost;
-                    p_outcome_node->h_ = start.DistanceTo(discovered);
+                    p_outcome_node->h_ = start.DistanceTo(discovered, distanceFunctions);
                     p_outcome_node->action_ = planned;
 
                     open.Update(*p_outcome_node);

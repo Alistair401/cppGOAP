@@ -1,5 +1,4 @@
 #include "WorldState.h"
-#include <cassert>
 
 void goap::WorldState::Set(int variable, void* subject, Value value)
 {
@@ -12,17 +11,20 @@ const goap::Value* goap::WorldState::Get(int variable, void* subject) const
     return found == this->values_.end() ? nullptr : &found->second;
 }
 
-int goap::WorldState::DistanceTo(const WorldState& other) const
+int goap::WorldState::DistanceTo(const WorldState& other, const DistanceFunctionMap& distanceFunctions) const
 {
     int result = 0;
 
     for (const auto& kv : other.values_)
     {
         auto itr = this->values_.find(kv.first);
-        if (itr == this->values_.end() || itr->second != kv.second)
+        const DistanceFunction& distanceFunction = distanceFunctions.Get(kv.first.variable);
+        const Value* currentValue = nullptr;
+        if (itr != this->values_.end())
         {
-            result++;
+            currentValue = &itr->second;
         }
+        result += distanceFunction(kv.second, currentValue);
     }
 
     return result;

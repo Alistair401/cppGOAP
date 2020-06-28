@@ -11,8 +11,6 @@
 #include "Value.h"
 #include "WorldStateKey.h"
 #include "DistanceFunctionMap.h"
-#include <map>
-#include <functional>
 
 namespace goap
 {
@@ -22,7 +20,7 @@ namespace goap
         void Set(int variable, void* subject, Value value);
         const Value* Get(int variable, void* subject) const;
 
-        int DistanceTo(const WorldState& other) const;
+        int DistanceTo(const WorldState& other, const DistanceFunctionMap& distanceFunctions) const;
         bool Satisfies(const WorldState& other) const;
         
         bool TryResolve(const WorldState& other);
