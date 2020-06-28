@@ -39,6 +39,11 @@ int goap::Value::AsInt() const
     return std::get<int>(this->data);
 }
 
+std::size_t goap::Value::GetHashCode() const
+{
+    return std::hash<std::variant<std::monostate, bool, float, int>>{}(this->data);
+}
+
 bool goap::Value::operator==(const Value& other) const
 {
     return this->data == other.data;

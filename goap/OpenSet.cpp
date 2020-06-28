@@ -21,47 +21,38 @@ namespace
 
 goap::Node goap::OpenSet::Pop()
 {
-    Node front = this->data.front();
+    Node front = this->data.Front();
     this->Swap(0, this->Size() - 1);
-    this->data.pop_back();
+    this->data.PopBack();
     this->DownHeapBubble(0);
     return front;
 }
 
 void goap::OpenSet::Add(Node&& n)
 {
-    this->data.push_back(std::move(n));
-    this->UpHeapBubble(static_cast<int>(data.size()) - 1);
+    this->data.PushBack(std::move(n));
+    this->UpHeapBubble(static_cast<int>(data.Size()) - 1);
 }
 
 goap::Node* goap::OpenSet::Find(const goap::WorldState& ws)
 {
-    auto itr = std::find_if(begin(this->data), end(this->data), [&](const goap::Node& n) { return ws == n.ws_; });
-    if (itr == end(this->data))
-    {
-        return nullptr;
-    }
-    else
-    {
-        return &(*itr);
-    }
+    return this->data.Find(ws);
 }
 
 int goap::OpenSet::Size()
 {
-    return static_cast<int>(this->data.size());
+    return static_cast<int>(this->data.Size());
 }
 
 void goap::OpenSet::Update(int id)
 {
-    auto itr = std::find_if(begin(this->data), end(this->data), [&](const goap::Node& n) { return n.id_ == id; });
-    int index = static_cast<int>(std::distance(this->data.begin(), itr));
+    int index = static_cast<int>(this->data.IndexOf(id));
     this->UpHeapBubble(index);
 }
 
 void goap::OpenSet::Swap(int indexA, int indexB)
 {
-    std::swap(this->data[indexA], this->data[indexB]);
+    std::swap(this->data.At(indexA), this->data.At(indexB));
 }
 
 void goap::OpenSet::UpHeapBubble(int index)
@@ -80,12 +71,12 @@ void goap::OpenSet::DownHeapBubble(int index)
     int lchild = LChild(index);
     int rchild = RChild(index);
 
-    if (lchild < data.size() && this->Score(lchild) < this->Score(smallest)) 
+    if (lchild < data.Size() && this->Score(lchild) < this->Score(smallest)) 
     {
         smallest = lchild;
     }
 
-    if (rchild < data.size() && this->Score(rchild) < this->Score(smallest)) 
+    if (rchild < data.Size() && this->Score(rchild) < this->Score(smallest)) 
     {
         smallest = rchild;
     }
@@ -97,8 +88,8 @@ void goap::OpenSet::DownHeapBubble(int index)
     }
 }
 
-int goap::OpenSet::Score(int index)
+int goap::OpenSet::Score(int index) const
 {
-    return this->data.at(index).f();
+    return this->data.At(index).f();
 }
 

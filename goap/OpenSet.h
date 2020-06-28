@@ -1,5 +1,5 @@
 #pragma once
-#include "Node.h"
+#include "NodeVector.h"
 
 namespace goap
 {
@@ -15,8 +15,8 @@ namespace goap
             void Swap(int indexA, int indexB);
             void UpHeapBubble(int index);
             void DownHeapBubble(int index);
-            int Score(int index);
-            std::vector<Node> data;
+            int Score(int index) const;
+            NodeVector data;
     };
 }
 

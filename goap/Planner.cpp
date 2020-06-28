@@ -5,19 +5,6 @@
 
 #include "OpenSet.h"
 
-namespace 
-{
-    std::vector<goap::Node>::iterator Find(std::vector<goap::Node>& set, const goap::WorldState& ws)
-    {
-        return std::find_if(begin(set), end(set), [&](const goap::Node& n) { return n.ws_ == ws; });
-    }
-
-    bool MemberOf(std::vector<goap::Node>& set, const goap::WorldState& ws)
-    {
-        return Find(set, ws) != end(set); 
-    }
-}
-
 std::vector<goap::PlannedAction> goap::Planner::Plan(
     const WorldState& start,
     const WorldState& goal,
@@ -25,7 +12,7 @@ std::vector<goap::PlannedAction> goap::Planner::Plan(
     const DistanceFunctionMap& distanceFunctions)
 {
     OpenSet open;
-    std::vector<Node> closed;
+    NodeVector closed;
 
     Node initialNode(goal, 0, start.DistanceTo(goal), 0);
 
@@ -33,8 +20,8 @@ std::vector<goap::PlannedAction> goap::Planner::Plan(
 
     while (open.Size() > 0) 
     {
-        closed.push_back(std::move(open.Pop()));
-        Node& current = closed.back();
+        closed.PushBack(std::move(open.Pop()));
+        Node& current = closed.Back();
 
         if (start.Satisfies(current.ws_)) 
         {
@@ -43,8 +30,7 @@ std::vector<goap::PlannedAction> goap::Planner::Plan(
             do 
             {
                 the_plan.push_back(current.action_.value());
-                auto itr = std::find_if(begin(closed), end(closed), [&](const Node& n) { return n.id_ == current.parent_id_; });
-                current = *itr;
+                current = closed.At(closed.IndexOf(current.parent_id_));
             } while (current.parent_id_ != 0);
 
             return the_plan;
@@ -71,7 +57,7 @@ std::vector<goap::PlannedAction> goap::Planner::Plan(
                 continue;
             };
 
-            if (MemberOf(closed, discovered)) 
+            if (closed.Find(discovered)) 
             {
                 continue;
             }

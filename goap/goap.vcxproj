@@ -129,6 +129,7 @@
     <ClCompile Include="DistanceFunctionMap.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="Hash.cpp" />
+    <ClCompile Include="NodeVector.cpp" />
     <ClCompile Include="OpenSet.cpp" />
     <ClCompile Include="PlannedAction.cpp" />
     <ClCompile Include="Planner.cpp" />
@@ -147,6 +148,7 @@
     <ClInclude Include="DistanceFunctionMap.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="Hash.h" />
+    <ClInclude Include="NodeVector.h" />
     <ClInclude Include="OpenSet.h" />
     <ClInclude Include="PlannedAction.h" />
     <ClInclude Include="Planner.h" />

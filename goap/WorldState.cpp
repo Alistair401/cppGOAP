@@ -98,9 +98,18 @@ bool goap::WorldState::TryApply(const WorldState& other)
     return true;
 }
 
+std::size_t goap::WorldState::GetHashCode() const
 {
+    std::size_t sum = 0;
+    
+    for (const auto& kv : this->values_)
     {
+        std::size_t hash = 0;
+        goap::hash_combine(hash, kv.first, kv.second);
+        sum += hash;
     }
+
+    return sum;
 }
 
 bool goap::WorldState::operator==(const WorldState& other) const
