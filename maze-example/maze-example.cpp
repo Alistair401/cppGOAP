@@ -81,7 +81,6 @@ public:
 
         preconditions.Set(POS_X, (void*)AgentId, sourceX);
         preconditions.Set(POS_Y, (void*)AgentId, sourceY);
-        preconditions.Set(WALKABLE, (void*)ElegantPair(sourceX, sourceY), true);
         preconditions.Set(WALKABLE, (void*)ElegantPair(goalX, goalY), true);
 
         effects.Set(POS_X, (void*)AgentId, goalX);
@@ -123,7 +122,6 @@ public:
 
         preconditions.Set(POS_X, (void*)AgentId, sourceX);
         preconditions.Set(POS_Y, (void*)AgentId, sourceY);
-        preconditions.Set(WALKABLE, (void*)ElegantPair(sourceX, sourceY), true);
         preconditions.Set(WALKABLE, (void*)ElegantPair(goalX, goalY), false);
         preconditions.Set(WALKABLE, (void*)ElegantPair(behindBlockX, behindBlockY), true);
 

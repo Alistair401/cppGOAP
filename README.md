@@ -1,38 +1,99 @@
-# C++ GOAP
-A simple GOAP (goal-oriented action planner) useful for game AI
+# cppGOAP 
+## A fork of [cpowell/cppGOAP](https://github.com/cpowell/cppGOAP)
 
-## Note
-This GOAP planner is inspired by Jeff Orkin's writings at http://alumni.media.mit.edu/~jorkin/goap.html .
-I wholeheartedly encourage you to read his papers there about how he and his team implemented AI in "F.E.A.R." using GOAP.
+Goal Oriented Action Programming (GOAP) is a planning architecture used in video games and other real-time applications. It's best described by Jeff Orkin [here](http://alumni.media.mit.edu/~jorkin/goap.html).
 
-The planner works well and fulfills the typical behaviors. Please consider it a work-in-progress as I add improvements, benchmark and optimize it, etc.
+Give the GOAP planner a start and a goal and a list of possible actions and it'll plan a sequence of actions to reach the goal. Defining actions can be simpler and more modular than defining transitions for a finite state machine, plus it allows for more emergent behaviour.
 
-## Goal-Oriented Action Planning
+## How to use
 
-Whereas some AI constructs like the fuzzy-logic FAM help you decide "what to do", GOAP helps you decide "how to do it." The planner is able to do this from a few basic ingredients:
-* A starting state
-* A goal state
-* A basket of actions that it can take, each of which has preconditions and effects
+### Set up
 
-The neat thing about a GOAP planner is that it figures out the 'route' from start to goal entirely by itself. It constructs said route by treating each 
-worldstate as a 'node' on a possible path, and employs the common A* ("A-star") pathfinding algorithm to find the best "path" between the states.
+The project is set up for use in a visual studio solution. 
+- Clone the repo
+- Put it somewhere
+- Include goap.vcxproj in your solution
+- Add the "goap" directory to your C++ include directories
 
-## See it in action
-Mike Dawson made a little demo of cppGOAP to have robotic workers find and carry spare parts to repair buildings. https://www.youtube.com/watch?v=v2shRoZtQj0&feature=youtu.be
+### Simple usage
 
-## Building and running
+Everything provided is in the `goap` namespace.
 
-This code leverages the C++11 standard. Visual Studio 2012 (or newer) is required to build the included solution; the code can also be easily adapted to build in XCode or using Clang/LLVM. (Consider these on my to-do list.)
+A plan needs a `start` and a `goal`. These are each given to the planner as a `WorldState`. A `WorldState` is a simplified representation of the world which maps a `variable`/`subject` pair to a `Value`. Each `variable` is an integer identifier, and each `subject` is just a `void*` which you're free to set to whatever you like, as long as it's unique. Each `Value` in a world state can be a `BOOL`, `FLOAT` or `INT`.
 
-## Included example
+```c++
+goap::WorldState start;
+start.Set(HAS_NUMBER, nullptr, true);
+start.Set(HAS_RECIPE, nullptr, true);
+start.Set(HUNGRY, nullptr, true);
 
-As Jeff Orkin's paper used a FPS AI, I've written an example that emulates the AI of a shooter. Here's an example run:
+goap::WorldState goal;
+goal.Set(HUNGRY, nullptr, false);
+```
 
-	Weapon example running...
-	Found a path!
-	knifeEnemy yields WorldState { isEnemyDead:1 | isMeDead:0 | hasWeaponInHand:1 | isEnemySighted:1 | isGunDrawn:0 | hasGun:1 | isEnemyInGunRange:0 | isKnifeDrawn:1 | isEnemyInKnifeRange:1 | isGunLoaded:0 | hasGunAmmo: 1 | hasKnife:1 | }
-	closeToKnifeRange yields WorldState { isEnemyDead:0 | isMeDead:0 | hasWeaponInHand:1 | isEnemySighted:1 | isGunDrawn:0 | isEnemyInGunRange:0 | hasGun:1 | isKnifeDrawn:1 | isEnemyInKnifeRange:1 | isGunLoaded:0 | hasGunAmmo:1 | hasKnife:1 | }
-	scoutStealthily yields WorldState { isEnemyDead:0 | isMeDead:0 | hasWeaponInHand:1 | isEnemySighted:1 | isGunDrawn:0 | isEnemyInGunRange:0 | hasGun:1 | isKnifeDrawn:1 | isEnemyInKnifeRange:0 | isGunLoaded:0 | hasGunAmmo:1 | hasKnife:1 | }
-	drawKnife yields WorldState { isEnemyDead:0 | isMeDead:0 | hasWeaponInHand:1 | isEnemySighted:0 | isGunDrawn:0 | hasGun:1 | isEnemyInGunRange:0 | isKnifeDrawn:1 | isEnemyInKnifeRange:0 | isGunLoaded:0 | hasGunAmmo:1 | hasKnife:1 | }
+A plan is a sequence of actions. An `Action` is given a goal state to act on, and produces `effects` given that `preconditions` are met. A `SimpleAction` class is provided that stores `Effect`s and `Precondition`s, and `SimpleEffect` and `SimplePrecondition` implementations are provided for those. Each `Action` has an integer identifier and a cost.
 
-In its present form it's somewhat verbose for use as a teaching tool and for experimentation; for even greater verbosity you can uncomment various ```std::cout``` calls in AStar.cpp. For actual use in a game (instead of as a toy or teaching tool) you would suppress all output and simply use the results in code.
+```c++
+std::shared_ptr<goap::SimpleAction> order = std::make_shared<goap::SimpleAction>(ORDER, 1);
+eat->AddPrecondition(new goap::SimplePrecondition(HAS_NUMBER, nullptr, true));
+eat->AddEffect(new goap::SimpleEffect(HUNGRY, nullptr, false));
+
+std::shared_ptr<goap::SimpleAction> cook = std::make_shared<goap::SimpleAction>(COOK, 5);
+eat->AddPrecondition(new goap::SimplePrecondition(HAS_RECIPE, nullptr, true));
+eat->AddEffect(new goap::SimpleEffect(HUNGRY, nullptr, false));
+
+std::vector<std::shared_ptr<goap::Action>> actions{ order, cook };
+```
+
+The `Planner` class calculates a plan.
+
+```c++
+std::vector<goap::PlannedAction> plan = goap::Planner::Plan(start, goal, actions);
+```
+
+Finally the plan that is created is a list of `PlannedAction` in order of expected execution.
+
+```c++
+for (int i = 0; i < plan.size(); i++)
+{
+	goap::PlannedAction nextAction = plan[i];
+}
+```
+
+### Advanced usage
+
+The `Action` abstract class can be extended to create complex and dynamic actions.
+
+```c++
+class CustomAction : public goap::Action
+{
+public:
+    CustomAction(int id, int cost)
+        : goap::Action(id, cost) {}
+
+    virtual goap::PlannedAction Act(
+		const goap::WorldState& goal,
+		goap::WorldState& preconditions,
+		goap::WorldState& effects) override
+    {
+		preconditions.Set(...)
+		effects.Set(...)
+
+		if (<failure condition>)
+			return goap::PlannedAction::Fail();
+
+        return goap::PlannedAction(this->id_);
+    }
+};
+```
+
+Custom actions are able to evaluate the current goal state (this is not necessarily the final goal state of the desired plan), and set the preconditions and effects of the action accordingly.
+
+A `DistanceFunctionMap` can be passed to the planner to override the default distance between non-equal values. These distances functions inform the heuristic used to calculate an estimate between each state and a goal state. Providing a custom distance function can help the planner converge on an optimal plan faster, but **be careful** as a distance function that overestimates the distance between two values can cause the planner to produce non-optimal plans.
+
+The `PlannedAction` returned by `Action::Act` can be given a `Value` which will be given as part of the formulated plan. `ActionWithValue` is provided which can be given a constant value to return. This might be useful for cases where an action acts on a specific target or has varying behaviour depending its desired effects.
+
+```c++
+std::shared_ptr<goap::ActionWithValue> eatPizza = std::make_shared<goap::ActionWithValue>(EAT, 1, goap::Value(PIZZA));
+std::shared_ptr<goap::ActionWithValue> eatCake = std::make_shared<goap::ActionWithValue>(EAT, 1, goap::Value(CAKE));
+```

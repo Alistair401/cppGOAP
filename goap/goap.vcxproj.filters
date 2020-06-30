@@ -23,16 +23,10 @@
     <ClCompile Include="Planner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Precondition.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SimplePrecondition.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PlannedAction.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Effect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SimpleEffect.cpp">
@@ -48,9 +42,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DistanceFunctionMap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Hash.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Value.cpp">

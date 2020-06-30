@@ -127,14 +127,11 @@
     <ClCompile Include="Action.cpp" />
     <ClCompile Include="ActionWithValue.cpp" />
     <ClCompile Include="DistanceFunctionMap.cpp" />
-    <ClCompile Include="Effect.cpp" />
-    <ClCompile Include="Hash.cpp" />
     <ClCompile Include="NodeVector.cpp" />
     <ClCompile Include="OpenSet.cpp" />
     <ClCompile Include="PlannedAction.cpp" />
     <ClCompile Include="Planner.cpp" />
     <ClCompile Include="Node.cpp" />
-    <ClCompile Include="Precondition.cpp" />
     <ClCompile Include="SimpleAction.cpp" />
     <ClCompile Include="SimpleEffect.cpp" />
     <ClCompile Include="SimplePrecondition.cpp" />
