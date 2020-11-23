@@ -14,8 +14,8 @@ namespace goap
     public:
         const Node& PushBack(Node&& n);
         Node* Find(const WorldState& ws);
-        const Node& At(int i) const;
-        Node& At(int i);
+        const Node& At(std::size_t i) const;
+        Node& At(std::size_t i);
         Node& Front();
         Node& Back();
         void PopBack();

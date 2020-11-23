@@ -24,12 +24,12 @@ goap::Node* goap::NodeVector::Find(const WorldState& ws)
     }
 }
 
-const goap::Node& goap::NodeVector::At(int i) const
+const goap::Node& goap::NodeVector::At(std::size_t i) const
 {
     return this->data_.at(i).first;
 }
 
-goap::Node& goap::NodeVector::At(int i)
+goap::Node& goap::NodeVector::At(std::size_t i)
 {
     return this->data_.at(i).first;
 }
