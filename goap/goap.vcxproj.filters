@@ -26,16 +26,10 @@
     <ClCompile Include="SimplePrecondition.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PlannedAction.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SimpleEffect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SimpleAction.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ActionWithValue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WorldStateKey.cpp">
@@ -51,6 +45,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NodeVector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EvaluatedAction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -73,9 +70,6 @@
     <ClInclude Include="SimplePrecondition.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PlannedAction.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Effect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -83,9 +77,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SimpleAction.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ActionWithValue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="WorldStateKey.h">
@@ -104,6 +95,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="NodeVector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EvaluatedAction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

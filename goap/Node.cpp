@@ -1,11 +1,6 @@
 #include "Node.h"
 int goap::Node::last_id_ = 0;
 
-goap::Node::Node() : g_(0), h_(0)
-{
-    id_ = ++last_id_;
-}
-
 goap::Node::Node(const WorldState state, int g, int h, int parent_id)
     : ws_(state)
     , g_(g)
@@ -16,7 +11,7 @@ goap::Node::Node(const WorldState state, int g, int h, int parent_id)
     id_ = ++last_id_;
 }
 
-goap::Node::Node(const WorldState state, int g, int h, int parent_id, const PlannedAction& action)
+goap::Node::Node(const WorldState state, int g, int h, int parent_id, const EvaluatedAction& action)
     : ws_(state)
     , g_(g)
     , h_(h)

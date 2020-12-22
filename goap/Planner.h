@@ -9,7 +9,6 @@
 #pragma once
 
 #include "Action.h"
-#include "PlannedAction.h"
 #include "Node.h"
 #include "WorldState.h"
 #include "DistanceFunctionMap.h"
@@ -24,7 +23,7 @@ namespace goap {
         Planner() = delete;
         Planner(const Planner& other) = delete;
 
-        static std::vector<PlannedAction> Plan(
+        static std::vector<EvaluatedAction> Plan(
             const WorldState& start,
             const WorldState& goal,
             const std::vector<std::shared_ptr<Action>>& actions,

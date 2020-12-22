@@ -66,7 +66,7 @@ public:
     {
     }
 
-    virtual goap::PlannedAction Act(const goap::WorldState& goal, goap::WorldState& preconditions, goap::WorldState& effects) override
+    virtual std::vector<goap::EvaluatedAction> Act(const goap::WorldState& goal) override
     {
         int goalX = goal.Get(POS_X, (void*)AgentId)->AsInt();
         int goalY = goal.Get(POS_Y, (void*)AgentId)->AsInt();
@@ -76,17 +76,21 @@ public:
 
         if (!InBounds(sourceX, sourceY))
         {
-            return goap::PlannedAction::Fail();
+            return {};
         }
 
-        preconditions.Set(POS_X, (void*)AgentId, sourceX);
-        preconditions.Set(POS_Y, (void*)AgentId, sourceY);
-        preconditions.Set(WALKABLE, (void*)ElegantPair(goalX, goalY), true);
+        goap::EvaluatedAction evaluated;
 
-        effects.Set(POS_X, (void*)AgentId, goalX);
-        effects.Set(POS_Y, (void*)AgentId, goalY);
+        evaluated.id = this->id_;
 
-        return goap::PlannedAction(this->id_, 0);
+        evaluated.preconditions.Set(POS_X, (void*)AgentId, sourceX);
+        evaluated.preconditions.Set(POS_Y, (void*)AgentId, sourceY);
+        evaluated.preconditions.Set(WALKABLE, (void*)ElegantPair(goalX, goalY), true);
+
+        evaluated.effects.Set(POS_X, (void*)AgentId, goalX);
+        evaluated.effects.Set(POS_Y, (void*)AgentId, goalY);
+
+        return { evaluated };
     }
 
 private:
@@ -104,7 +108,7 @@ public:
     {
     }
     
-    virtual goap::PlannedAction Act(const goap::WorldState& goal, goap::WorldState& preconditions, goap::WorldState& effects) override
+    virtual std::vector<goap::EvaluatedAction> Act(const goap::WorldState& goal) override
     {
         int goalX = goal.Get(POS_X, (void*)AgentId)->AsInt();
         int goalY = goal.Get(POS_Y, (void*)AgentId)->AsInt();
@@ -117,20 +121,24 @@ public:
 
         if (!(InBounds(sourceX, sourceY) && InBounds(behindBlockX, behindBlockY)))
         {
-            return goap::PlannedAction::Fail();
+            return {};
         }
 
-        preconditions.Set(POS_X, (void*)AgentId, sourceX);
-        preconditions.Set(POS_Y, (void*)AgentId, sourceY);
-        preconditions.Set(WALKABLE, (void*)ElegantPair(goalX, goalY), false);
-        preconditions.Set(WALKABLE, (void*)ElegantPair(behindBlockX, behindBlockY), true);
+        goap::EvaluatedAction evaluated;
 
-        effects.Set(POS_X, (void*)AgentId, goalX);
-        effects.Set(POS_Y, (void*)AgentId, goalY);
-        effects.Set(WALKABLE, (void*)ElegantPair(goalX, goalY), true);
-        effects.Set(WALKABLE, (void*)ElegantPair(behindBlockX, behindBlockY), false);
+        evaluated.id = this->id_;
 
-        return goap::PlannedAction(this->id_, 1);
+        evaluated.preconditions.Set(POS_X, (void*)AgentId, sourceX);
+        evaluated.preconditions.Set(POS_Y, (void*)AgentId, sourceY);
+        evaluated.preconditions.Set(WALKABLE, (void*)ElegantPair(goalX, goalY), false);
+        evaluated.preconditions.Set(WALKABLE, (void*)ElegantPair(behindBlockX, behindBlockY), true);
+
+        evaluated.effects.Set(POS_X, (void*)AgentId, goalX);
+        evaluated.effects.Set(POS_Y, (void*)AgentId, goalY);
+        evaluated.effects.Set(WALKABLE, (void*)ElegantPair(goalX, goalY), true);
+        evaluated.effects.Set(WALKABLE, (void*)ElegantPair(behindBlockX, behindBlockY), false);
+
+        return { evaluated };
     }
 
 private:
@@ -164,7 +172,7 @@ int main(int argc, char** argv)
     bool mousePressed = false;
     SDL_Point cursor{};
     size_t toolIndex = 0;
-    std::vector<goap::PlannedAction> plan;
+    std::vector<goap::EvaluatedAction> plan;
     
     std::vector<std::shared_ptr<goap::Action>> actions;
     actions.emplace_back(new MoveAction(UP, 0, -1));
@@ -315,7 +323,7 @@ int main(int argc, char** argv)
 
             if (!plan.empty())
             {
-                goap::PlannedAction a = plan.back();
+                goap::EvaluatedAction& a = plan.back();
                 
                 SDL_Point agentCell{};
                 for (int x = 0; x < gridSize; x++) 
@@ -334,7 +342,7 @@ int main(int argc, char** argv)
                 int moveX = 0;
                 int moveY = 0;
                 
-                switch (a.GetId())
+                switch (a.id)
                 {
                 case UP:
                     moveY = -1;

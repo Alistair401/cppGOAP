@@ -125,11 +125,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Action.cpp" />
-    <ClCompile Include="ActionWithValue.cpp" />
     <ClCompile Include="DistanceFunctionMap.cpp" />
+    <ClCompile Include="EvaluatedAction.cpp" />
     <ClCompile Include="NodeVector.cpp" />
     <ClCompile Include="OpenSet.cpp" />
-    <ClCompile Include="PlannedAction.cpp" />
     <ClCompile Include="Planner.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="SimpleAction.cpp" />
@@ -141,13 +140,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Action.h" />
-    <ClInclude Include="ActionWithValue.h" />
     <ClInclude Include="DistanceFunctionMap.h" />
     <ClInclude Include="Effect.h" />
+    <ClInclude Include="EvaluatedAction.h" />
     <ClInclude Include="Hash.h" />
     <ClInclude Include="NodeVector.h" />
     <ClInclude Include="OpenSet.h" />
-    <ClInclude Include="PlannedAction.h" />
     <ClInclude Include="Planner.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="Precondition.h" />

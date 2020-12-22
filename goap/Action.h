@@ -13,7 +13,7 @@
 #include <optional>
 #include "Effect.h"
 #include "Precondition.h"
-#include "PlannedAction.h"
+#include "EvaluatedAction.h"
 
 namespace goap 
 {
@@ -30,7 +30,7 @@ namespace goap
     public:
         Action(int id, int cost);
 
-        virtual PlannedAction Act(const WorldState& goal, WorldState& preconditions, WorldState& effects) = 0;
+        virtual std::vector<EvaluatedAction> Act(const WorldState& goal) = 0;
 
         int GetCost() const { return cost_; }
         int Id() const { return id_; }

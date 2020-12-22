@@ -12,7 +12,7 @@ namespace goap
         
         void AddEffect(Effect* e);
 
-        virtual PlannedAction Act(const WorldState& state, WorldState& preconditions, WorldState& effects) override;
+        virtual std::vector<EvaluatedAction> Act(const WorldState& state) override;
 
     private:
         std::vector<std::shared_ptr<Precondition>> preconditions_;

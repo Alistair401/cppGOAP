@@ -3,7 +3,6 @@
 #include "SimpleEffect.h"
 #include "SimplePrecondition.h"
 #include "SimpleAction.h"
-#include "ActionWithValue.h"
 
 enum ActionId
 {
@@ -33,20 +32,20 @@ int main()
     goap::WorldState goal;
     goal.Set(HUNGRY, nullptr, false);
 
-    std::shared_ptr<goap::ActionWithValue> eat = std::make_shared<goap::ActionWithValue>(EAT, 1, goap::Value(PIZZA));
+    std::shared_ptr<goap::SimpleAction> eat = std::make_shared<goap::SimpleAction>(EAT, 1);
     eat->AddPrecondition(new goap::SimplePrecondition(HAS, nullptr, PIZZA));
     eat->AddEffect(new goap::SimpleEffect(HUNGRY, nullptr, false));
 
-    std::shared_ptr<goap::ActionWithValue> order = std::make_shared<goap::ActionWithValue>(ORDER, 1, goap::Value(PIZZA));
+    std::shared_ptr<goap::SimpleAction> order = std::make_shared<goap::SimpleAction>(ORDER, 1);
     order->AddPrecondition(new goap::SimplePrecondition(HAS, nullptr, NUMBER));
     order->AddEffect(new goap::SimpleEffect(HAS, nullptr, PIZZA));
 
-    std::shared_ptr<goap::ActionWithValue> cook = std::make_shared<goap::ActionWithValue>(COOK, 10, goap::Value(PIZZA));
+    std::shared_ptr<goap::SimpleAction> cook = std::make_shared<goap::SimpleAction>(COOK, 10);
     cook->AddPrecondition(new goap::SimplePrecondition(HAS, nullptr, RECIPE));
     cook->AddEffect(new goap::SimpleEffect(HAS, nullptr, PIZZA));
 
     std::vector<std::shared_ptr<goap::Action>> actions{ eat, order, cook };
-    std::vector<goap::PlannedAction> plan = goap::Planner::Plan(start, goal, actions);
+    std::vector<goap::EvaluatedAction> plan = goap::Planner::Plan(start, goal, actions);
 
     std::unordered_map<int, std::string> actionLookup;
     actionLookup[ORDER] = "ORDER";
@@ -58,15 +57,8 @@ int main()
     objectLookup[NUMBER] = "NUMBER";
     objectLookup[PIZZA] = "PIZZA";
 
-    while (plan.size() > 0) 
+    for (const auto& action : plan)
     {
-        goap::PlannedAction a = plan.back();
-        std::cout << actionLookup[a.GetId()];
-        if (a.GetValue().GetType() == goap::Type::INT) 
-        {
-            std::cout << " " << objectLookup[a.GetValue().AsInt()];
-        }
-        std::cout << std::endl;
-        plan.pop_back();
+        std::cout << actionLookup[action.id] << std::endl;
     }
 }

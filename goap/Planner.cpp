@@ -4,7 +4,7 @@
 
 #include "OpenSet.h"
 
-std::vector<goap::PlannedAction> goap::Planner::Plan(
+std::vector<goap::EvaluatedAction> goap::Planner::Plan(
     const WorldState& start,
     const WorldState& goal,
     const std::vector<std::shared_ptr<Action>>& actions,
@@ -24,7 +24,7 @@ std::vector<goap::PlannedAction> goap::Planner::Plan(
 
         if (start.Satisfies(current.ws_)) 
         {
-            std::vector<PlannedAction> the_plan;
+            std::vector<EvaluatedAction> the_plan;
             
             do 
             {
@@ -37,52 +37,53 @@ std::vector<goap::PlannedAction> goap::Planner::Plan(
 
         for (const auto& potential_action : actions) 
         {
-            WorldState preconditions;
-            WorldState effects;
-            PlannedAction planned = potential_action->Act(current.ws_, preconditions, effects);
-            if (planned.Success() == false)
+            std::vector<EvaluatedAction> planned = potential_action->Act(current.ws_);
+            if (planned.empty())
             {
                 continue;
             }
 
-            WorldState discovered(current.ws_);
-            if (!discovered.TryResolve(effects))
+            for (const auto& planned_action : planned)
             {
-                continue;
-            }
-            
-            if (!discovered.TryAdd(preconditions))
-            {
-                continue;
-            };
-
-            if (closed.Find(discovered)) 
-            {
-                continue;
-            }
-
-            Node* p_outcome_node = open.Find(discovered);
-            if (p_outcome_node == nullptr) 
-            {
-                Node found(discovered, current.g_ + potential_action->GetCost(), start.DistanceTo(discovered, distanceFunctions), current.id_, planned);
-                open.Add(std::move(found));
-            }
-            else
-            {
-                int tentativeCost = current.g_ + potential_action->GetCost();
-                if (tentativeCost < p_outcome_node->g_) 
+                WorldState discovered(current.ws_);
+                if (!discovered.TryResolve(planned_action.effects))
                 {
-                    p_outcome_node->parent_id_ = current.id_;
-                    p_outcome_node->g_ = tentativeCost;
-                    p_outcome_node->h_ = start.DistanceTo(discovered, distanceFunctions);
-                    p_outcome_node->action_ = planned;
+                    continue;
+                }
 
-                    open.Update(*p_outcome_node);
+                if (!discovered.TryAdd(planned_action.preconditions))
+                {
+                    continue;
+                };
+
+                if (closed.Find(discovered))
+                {
+                    continue;
+                }
+
+                Node* p_outcome_node = open.Find(discovered);
+                if (p_outcome_node == nullptr)
+                {
+                    Node found(discovered, current.g_ + potential_action->GetCost(), start.DistanceTo(discovered, distanceFunctions), current.id_, planned_action);
+                    open.Add(std::move(found));
+                }
+                else 
+                {
+                    int tentativeCost = current.g_ + potential_action->GetCost();
+                    if (tentativeCost < p_outcome_node->g_)
+                    {
+                        p_outcome_node->parent_id_ = current.id_;
+                        p_outcome_node->g_ = tentativeCost;
+                        p_outcome_node->h_ = start.DistanceTo(discovered, distanceFunctions);
+                        p_outcome_node->action_ = planned_action;
+
+                        open.Update(*p_outcome_node);
+                    }
                 }
             }
         }
     }
 
     // If there's nothing left to evaluate, then we have no possible path left
-    return std::vector<goap::PlannedAction>();
+    return {};
 }

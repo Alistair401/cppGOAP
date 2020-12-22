@@ -21,11 +21,10 @@ namespace goap {
         int parent_id_;      // the ID of this node's immediate predecessor
         int g_;              // The A* cost from 'start' to 'here'
         int h_;              // The estimated remaining cost to 'goal' form 'here'
-        std::optional<PlannedAction> action_;     // The action that got us here (for replay purposes)
+        std::optional<EvaluatedAction> action_;     // The action that got us here (for replay purposes)
 
-        Node();
         Node(const WorldState state, int g, int h, int parent_id);
-        Node(const WorldState state, int g, int h, int parent_id, const PlannedAction& action);
+        Node(const WorldState state, int g, int h, int parent_id, const EvaluatedAction& action);
 
         int f() const;
     };

@@ -15,15 +15,21 @@ void goap::SimpleAction::AddEffect(Effect* e)
     this->effects_.emplace_back(e);
 }
 
-goap::PlannedAction goap::SimpleAction::Act(const WorldState& state, WorldState& preconditions, WorldState& effects)
+std::vector<goap::EvaluatedAction> goap::SimpleAction::Act(const WorldState& state)
 {
-    for (const auto& effect : this->effects_) {
-        effect->Apply(effects);
+    goap::EvaluatedAction evaluated;
+
+    evaluated.id = this->id_;
+
+    for (const auto& effect : this->effects_)
+    {
+        effect->Apply(evaluated.effects);
     }
 
-    for (const auto& precondition : this->preconditions_) {
-        precondition->Apply(preconditions);
+    for (const auto& precondition : this->preconditions_)
+    {
+        precondition->Apply(evaluated.preconditions);
     }
 
-    return PlannedAction(this->id_);
+    return { evaluated };
 }

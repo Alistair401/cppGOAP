@@ -14,11 +14,14 @@
 
 namespace goap
 {
+    using SubjectValuePair = std::pair<void*, Value>;
+    
     class WorldState 
     {
     public:
         void Set(int variable, void* subject, Value value);
         const Value* Get(int variable, void* subject) const;
+        const std::vector<SubjectValuePair> Get(int variable) const;
 
         int DistanceTo(const WorldState& other, const DistanceFunctionMap& distanceFunctions) const;
         bool Satisfies(const WorldState& other) const;

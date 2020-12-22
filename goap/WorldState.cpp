@@ -11,6 +11,21 @@ const goap::Value* goap::WorldState::Get(int variable, void* subject) const
     return found == this->values_.end() ? nullptr : &found->second;
 }
 
+const std::vector<goap::SubjectValuePair> goap::WorldState::Get(int variable) const
+{
+    std::vector<SubjectValuePair> subjectValuePairs;
+
+    for (const auto& kv : this->values_)
+    {
+        if (kv.first.variable == variable)
+        {
+            subjectValuePairs.emplace_back(kv.first.subject, kv.second);
+        }
+    }
+
+    return subjectValuePairs;
+}
+
 int goap::WorldState::DistanceTo(const WorldState& other, const DistanceFunctionMap& distanceFunctions) const
 {
     int result = 0;
