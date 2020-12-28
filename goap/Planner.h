@@ -27,6 +27,7 @@ namespace goap {
             const WorldState& start,
             const WorldState& goal,
             const std::vector<std::shared_ptr<Action>>& actions,
+            void* world = nullptr,
             const DistanceFunctionMap& distanceFunctions = DistanceFunctionMap());
     };
 }

@@ -1,13 +1,6 @@
 #include "SimpleEffect.h"
 
-goap::SimpleEffect::SimpleEffect(int variable, void* subject, bool value)
-    : variable(variable)
-    , subject(subject)
-    , value(value)
-{
-}
-
-goap::SimpleEffect::SimpleEffect(int variable, void* subject, int value)
+goap::SimpleEffect::SimpleEffect(int variable, void* subject, Value value)
     : variable(variable)
     , subject(subject)
     , value(value)

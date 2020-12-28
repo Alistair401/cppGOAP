@@ -1,7 +1,7 @@
 #include "SimpleAction.h"
 
 goap::SimpleAction::SimpleAction(int id, int cost)
-    : goap::Action(id, cost)
+    : cost(cost), goap::Action(id)
 {
 }
 
@@ -15,11 +15,12 @@ void goap::SimpleAction::AddEffect(Effect* e)
     this->effects_.emplace_back(e);
 }
 
-std::vector<goap::EvaluatedAction> goap::SimpleAction::Act(const WorldState& state)
+std::vector<goap::EvaluatedAction> goap::SimpleAction::Act(void* world, const WorldState& state)
 {
     goap::EvaluatedAction evaluated;
 
     evaluated.id = this->id_;
+    evaluated.cost = this->cost;
 
     for (const auto& effect : this->effects_)
     {

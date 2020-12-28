@@ -60,13 +60,13 @@ class MoveAction : public goap::Action
 {
 public:
     MoveAction(int id, int x, int y)
-        : goap::Action(id, 1)
+        : goap::Action(id)
         , x(x)
         , y(y)
     {
     }
 
-    virtual std::vector<goap::EvaluatedAction> Act(const goap::WorldState& goal) override
+    virtual std::vector<goap::EvaluatedAction> Act(void* world, const goap::WorldState& goal) override
     {
         int goalX = goal.Get(POS_X, (void*)AgentId)->AsInt();
         int goalY = goal.Get(POS_Y, (void*)AgentId)->AsInt();
@@ -102,13 +102,13 @@ class PushAction : public goap::Action
 {
 public:
     PushAction(int id, int x, int y)
-        : goap::Action(id, 1)
+        : goap::Action(id)
         , x(x)
         , y(y)
     {
     }
     
-    virtual std::vector<goap::EvaluatedAction> Act(const goap::WorldState& goal) override
+    virtual std::vector<goap::EvaluatedAction> Act(void* world, const goap::WorldState& goal) override
     {
         int goalX = goal.Get(POS_X, (void*)AgentId)->AsInt();
         int goalY = goal.Get(POS_Y, (void*)AgentId)->AsInt();
@@ -310,7 +310,7 @@ int main(int argc, char** argv)
                 goal.Set(POS_X, (void*)AgentId, goalCell.x);
                 goal.Set(POS_Y, (void*)AgentId, goalCell.y);
                 
-                plan = goap::Planner::Plan(start, goal, actions, distanceFunctions);
+                plan = goap::Planner::Plan(start, goal, actions, nullptr, distanceFunctions);
                 std::reverse(plan.begin(), plan.end());
             }
         }

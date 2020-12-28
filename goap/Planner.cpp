@@ -8,8 +8,14 @@ std::vector<goap::EvaluatedAction> goap::Planner::Plan(
     const WorldState& start,
     const WorldState& goal,
     const std::vector<std::shared_ptr<Action>>& actions,
+    void* world,
     const DistanceFunctionMap& distanceFunctions)
 {
+    if (start.Satisfies(goal))
+    {
+        return {};
+    }
+
     OpenSet open;
     NodeVector closed;
 
@@ -37,7 +43,7 @@ std::vector<goap::EvaluatedAction> goap::Planner::Plan(
 
         for (const auto& potential_action : actions) 
         {
-            std::vector<EvaluatedAction> planned = potential_action->Act(current.ws_);
+            std::vector<EvaluatedAction> planned = potential_action->Act(world, current.ws_);
             if (planned.empty())
             {
                 continue;
@@ -64,12 +70,12 @@ std::vector<goap::EvaluatedAction> goap::Planner::Plan(
                 Node* p_outcome_node = open.Find(discovered);
                 if (p_outcome_node == nullptr)
                 {
-                    Node found(discovered, current.g_ + potential_action->GetCost(), start.DistanceTo(discovered, distanceFunctions), current.id_, planned_action);
+                    Node found(discovered, current.g_ + planned_action.cost, start.DistanceTo(discovered, distanceFunctions), current.id_, planned_action);
                     open.Add(std::move(found));
                 }
                 else 
                 {
-                    int tentativeCost = current.g_ + potential_action->GetCost();
+                    int tentativeCost = current.g_ + planned_action.cost;
                     if (tentativeCost < p_outcome_node->g_)
                     {
                         p_outcome_node->parent_id_ = current.id_;

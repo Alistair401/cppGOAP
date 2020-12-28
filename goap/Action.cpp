@@ -1,7 +1,6 @@
 #include "Action.h"
 
-goap::Action::Action(int id, int cost)
+goap::Action::Action(int id)
 {
     this->id_ = id;
-    this->cost_ = cost;
 }

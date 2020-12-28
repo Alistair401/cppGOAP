@@ -12,9 +12,10 @@ namespace goap
         
         void AddEffect(Effect* e);
 
-        virtual std::vector<EvaluatedAction> Act(const WorldState& state) override;
+        virtual std::vector<EvaluatedAction> Act(void* world, const WorldState& state) override;
 
     private:
+        int cost = 1;
         std::vector<std::shared_ptr<Precondition>> preconditions_;
         std::vector<std::shared_ptr<Effect>> effects_;
     };

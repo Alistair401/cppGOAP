@@ -21,18 +21,14 @@ namespace goap
 
     class Action 
     {
-    private:
-        int cost_;
-
     protected:
         int id_; 
 
     public:
-        Action(int id, int cost);
+        Action(int id);
 
-        virtual std::vector<EvaluatedAction> Act(const WorldState& goal) = 0;
+        virtual std::vector<EvaluatedAction> Act(void* world, const WorldState& goal) = 0;
 
-        int GetCost() const { return cost_; }
         int Id() const { return id_; }
     };
 }
