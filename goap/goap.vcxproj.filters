@@ -47,7 +47,7 @@
     <ClCompile Include="NodeVector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EvaluatedAction.cpp">
+    <ClCompile Include="SlicedPlan.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -98,6 +98,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EvaluatedAction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SlicedPlan.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

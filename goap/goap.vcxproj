@@ -126,7 +126,6 @@
   <ItemGroup>
     <ClCompile Include="Action.cpp" />
     <ClCompile Include="DistanceFunctionMap.cpp" />
-    <ClCompile Include="EvaluatedAction.cpp" />
     <ClCompile Include="NodeVector.cpp" />
     <ClCompile Include="OpenSet.cpp" />
     <ClCompile Include="Planner.cpp" />
@@ -134,6 +133,7 @@
     <ClCompile Include="SimpleAction.cpp" />
     <ClCompile Include="SimpleEffect.cpp" />
     <ClCompile Include="SimplePrecondition.cpp" />
+    <ClCompile Include="SlicedPlan.cpp" />
     <ClCompile Include="Value.cpp" />
     <ClCompile Include="WorldState.cpp" />
     <ClCompile Include="WorldStateKey.cpp" />
@@ -152,6 +152,7 @@
     <ClInclude Include="SimpleAction.h" />
     <ClInclude Include="SimpleEffect.h" />
     <ClInclude Include="SimplePrecondition.h" />
+    <ClInclude Include="SlicedPlan.h" />
     <ClInclude Include="Value.h" />
     <ClInclude Include="WorldState.h" />
     <ClInclude Include="WorldStateKey.h" />

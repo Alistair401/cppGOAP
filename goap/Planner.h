@@ -9,13 +9,7 @@
 #pragma once
 
 #include "Action.h"
-#include "Node.h"
-#include "WorldState.h"
 #include "DistanceFunctionMap.h"
-
-#include <ostream>
-#include <unordered_map>
-#include <vector>
 
 namespace goap {
     class Planner {

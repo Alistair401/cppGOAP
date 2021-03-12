@@ -2,7 +2,7 @@
 #include <chrono>
 #include <vector>
 #include <limits>
-#include "Planner.h"
+#include "SlicedPlan.h"
 
 #define WIN32
 
@@ -173,6 +173,7 @@ int main(int argc, char** argv)
     SDL_Point cursor{};
     size_t toolIndex = 0;
     std::vector<goap::EvaluatedAction> plan;
+    std::unique_ptr<goap::SlicedPlan> planner = nullptr;
     
     std::vector<std::shared_ptr<goap::Action>> actions;
     actions.emplace_back(new MoveAction(UP, 0, -1));
@@ -267,7 +268,7 @@ int main(int argc, char** argv)
             gridData[cellY][cellX] = tools[toolIndex].cell;
         }
 
-        if (plan.empty()) 
+        if (planner.get() == nullptr && plan.empty()) 
         {
             bool foundGoal = false;
             bool foundAgent = false;
@@ -310,8 +311,27 @@ int main(int argc, char** argv)
                 goal.Set(POS_X, (void*)AgentId, goalCell.x);
                 goal.Set(POS_Y, (void*)AgentId, goalCell.y);
                 
-                plan = goap::Planner::Plan(start, goal, actions, nullptr, distanceFunctions);
-                std::reverse(plan.begin(), plan.end());
+                planner = std::make_unique<goap::SlicedPlan>(start, goal, actions, nullptr, distanceFunctions);
+            }
+        }
+
+        if (planner.get() != nullptr)
+        {
+            planner->RunIterations(100);
+
+            if (planner->State != goap::SlicedPlanState::IN_PROGRESS) 
+            {
+                if (planner->State == goap::SlicedPlanState::NO_PLAN)
+                {
+                    planner.reset(nullptr);
+                }
+                else if (planner->State == goap::SlicedPlanState::PLAN_FOUND)
+                {
+                    planner->Finalize();
+                    plan = planner->Result;
+                    std::reverse(plan.begin(), plan.end());
+                    planner.reset(nullptr);
+                }
             }
         }
 
