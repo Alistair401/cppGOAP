@@ -4,8 +4,6 @@
 #include <limits>
 #include "SlicedPlan.h"
 
-#define WIN32
-
 #define SDL_MAIN_HANDLED
 
 #include <SDL2/SDL.h>
