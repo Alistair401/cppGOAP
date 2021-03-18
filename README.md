@@ -9,11 +9,12 @@ Give the GOAP planner a start and a goal and a list of possible actions and it'l
 
 ### Set up
 
-The project is set up for use in a visual studio solution. 
-- Clone the repo
-- Put it somewhere
-- Include goap.vcxproj in your solution
-- Add the "goap" directory to your C++ include directories
+- Install [CMake](https://cmake.org/).
+- Clone this repo.
+- Navigate to a directory where you'd like to put build files.
+- Decide whether you want to build the library on it's own, or together with the examples.
+- Run `cmake -DCMAKE_CONFIGURATION_TYPES="Debug;Release" -DCMAKE_GENERATOR_PLATFORM=x64 -G "Visual Studio 16 2019" <path to CMakeLists.txt>` from the command line. Replace `Visual Studio 16 2019` with whatever build tool you're using. Replace `<path to CMakeLists.txt>` with either the path to the "goap" directory of this repo to build the library, or the path to the root of the repo to build the examples too.
+- Open the generated "cppGoap.sln" or build with your build tool.
 
 ### Simple usage
 
