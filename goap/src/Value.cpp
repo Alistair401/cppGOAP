@@ -14,11 +14,6 @@ goap::Value::Value(int value)
 {
 }
 
-goap::Value::Value(float value)
-    : data(value)
-{
-}
-
 goap::Type goap::Value::GetType() const
 {
     return static_cast<Type>(this->data.index());
@@ -29,11 +24,6 @@ bool goap::Value::AsBool() const
     return std::get<bool>(this->data);
 }
 
-float goap::Value::AsFloat() const
-{
-    return std::get<float>(this->data);
-}
-
 int goap::Value::AsInt() const
 {
     return std::get<int>(this->data);
@@ -41,7 +31,7 @@ int goap::Value::AsInt() const
 
 std::size_t goap::Value::GetHashCode() const
 {
-    return std::hash<std::variant<std::monostate, bool, float, int>>{}(this->data);
+    return std::hash<std::variant<std::monostate, bool, int>>{}(this->data);
 }
 
 bool goap::Value::operator==(const Value& other) const

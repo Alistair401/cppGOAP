@@ -7,7 +7,6 @@ namespace goap
     {
         EMPTY,
         BOOL,
-        FLOAT,
         INT
     };
 
@@ -18,12 +17,10 @@ namespace goap
 
         Value(bool value);
         Value(int value);
-        Value(float value);
 
         Type GetType() const;
 
         bool AsBool() const;
-        float AsFloat() const;
         int AsInt() const;
 
         std::size_t GetHashCode() const;
@@ -31,7 +28,7 @@ namespace goap
         bool operator==(const Value& other) const;
         bool operator!=(const Value& other) const;
     private:
-        std::variant<std::monostate, bool, float, int> data;
+        std::variant<std::monostate, bool, int> data;
     };
 }
 namespace std
